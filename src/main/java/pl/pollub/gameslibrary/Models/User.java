@@ -1,7 +1,6 @@
 package pl.pollub.gameslibrary.Models;
 
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
