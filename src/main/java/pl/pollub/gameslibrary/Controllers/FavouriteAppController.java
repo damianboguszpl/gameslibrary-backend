@@ -6,7 +6,7 @@ import pl.pollub.gameslibrary.Models.FavouriteApp;
 import pl.pollub.gameslibrary.Repositories.FavouriteAppRepository;
 
 @RestController
-@RequestMapping(path="/review")
+@RequestMapping(path="/favourite")
 public class FavouriteAppController {
     @Autowired
     private FavouriteAppRepository favouriteAppRepository;
