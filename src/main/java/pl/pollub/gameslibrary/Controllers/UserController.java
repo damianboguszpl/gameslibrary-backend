@@ -1,5 +1,6 @@
 package pl.pollub.gameslibrary.Controllers;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.pollub.gameslibrary.Models.User;
@@ -23,6 +24,10 @@ public class UserController {
 
     @PostMapping(path = "")
     public User addUser(@RequestBody User user) {
+        String password = user.getPassword();
+        String bcryptHashString = BCrypt.withDefaults().hashToString(10, password.toCharArray());
+        user.setPassword(bcryptHashString);
+
         return userRepository.save(user);
     }
 
@@ -33,9 +38,11 @@ public class UserController {
         if (user != null) {
             user.setLogin(newUser.getLogin()!=null?newUser.getLogin():user.getLogin());
             user.setEmail(newUser.getEmail()!=null?newUser.getEmail():user.getEmail());
+
             if(newUser.getPassword() != null) {
-                // inline if overrides hash
-                user.setPassword(newUser.getPassword());
+                String password = newUser.getPassword();
+                String bcryptHashString = BCrypt.withDefaults().hashToString(10, password.toCharArray());
+                user.setPassword(bcryptHashString);
             }
 
             return userRepository.save(user);
