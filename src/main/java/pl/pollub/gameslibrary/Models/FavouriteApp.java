@@ -1,12 +1,14 @@
 package pl.pollub.gameslibrary.Models;
 
 import lombok.*;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
 @Entity
 @Data
 @ToString
+@Component
 public class FavouriteApp {
 
     @Id
@@ -16,5 +18,7 @@ public class FavouriteApp {
     @Column(nullable = false)
     private Long appId;
 
-    // + userId
+    @ManyToOne
+    @JoinColumn(name="userId",referencedColumnName="id")
+    private User userId;
 }

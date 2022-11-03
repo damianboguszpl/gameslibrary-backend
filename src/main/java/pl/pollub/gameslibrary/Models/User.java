@@ -1,12 +1,14 @@
 package pl.pollub.gameslibrary.Models;
 
 import lombok.*;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
 @Entity
 @Data
 @ToString
+@Component
 public class User {
 
     @Id

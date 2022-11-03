@@ -1,12 +1,14 @@
 package pl.pollub.gameslibrary.Models;
 
 import lombok.*;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
 @Entity
 @Data
 @ToString
+@Component
 public class Review {
 
     @Id
@@ -22,6 +24,8 @@ public class Review {
     @Column(nullable = false)
     private Integer rating;
 
-    // + userId
+    @ManyToOne
+    @JoinColumn(name="userId",referencedColumnName="id")
+    private User userId;
 
 }
