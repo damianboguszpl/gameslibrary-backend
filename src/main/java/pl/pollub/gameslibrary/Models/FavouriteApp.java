@@ -16,5 +16,7 @@ public class FavouriteApp {
     @Column(nullable = false)
     private Long appId;
 
-    // + userId
+    @ManyToOne
+    @JoinColumn(name="userId",referencedColumnName="id")
+    private User user;
 }

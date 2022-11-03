@@ -22,6 +22,8 @@ public class Review {
     @Column(nullable = false)
     private Integer rating;
 
-    // + userId
+    @ManyToOne
+    @JoinColumn(name="userId",referencedColumnName="id")
+    private User user;
 
 }
