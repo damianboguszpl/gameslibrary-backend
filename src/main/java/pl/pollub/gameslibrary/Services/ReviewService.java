@@ -4,11 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pollub.gameslibrary.Models.Review;
 import pl.pollub.gameslibrary.Repositories.ReviewRepository;
+import pl.pollub.gameslibrary.Repositories.UserRepository;
 
 @Service
 public class ReviewService {
     @Autowired
     private ReviewRepository reviewRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public Iterable<Review> findAll() {
         return reviewRepository.findAll();
@@ -25,7 +28,8 @@ public class ReviewService {
             review.setTextReview(newReview.getTextReview()!=null?newReview.getTextReview():review.getTextReview());
             review.setRating(newReview.getRating()!=null?newReview.getRating():review.getRating());
             review.setAppId(newReview.getAppId()!=null?newReview.getAppId():review.getAppId());
-            review.setUserId(newReview.getUserId()!=null?newReview.getUserId():review.getUserId());
+//            review.setUserId(newReview.getUserId()!=null?newReview.getUserId():review.getUserId());
+//            review.setUser(newReview.getUser()!=null?newReview.getUser():review.getUser());
             return reviewRepository.save(review);
         }
         else return null;
@@ -33,10 +37,14 @@ public class ReviewService {
 
     @Autowired
     public Review add(Review review) {
-        if(review.getAppId() != null && review.getTextReview() != null && review.getRating() != null && review.getUserId() != null) {
-            return reviewRepository.save(review);
-        }
-        else return null;
+        System.out.println(review.toString());
+//        if(review.getAppId() != null && review.getTextReview() != null && review.getRating() != null && review.getUserId() != null) {
+//        if(review.getAppId() != null && review.getTextReview() != null && review.getRating() != null && review.getUser() != null) {
+            if(review.getAppId() != null && review.getTextReview() != null && review.getRating() != null) {
+                return reviewRepository.save(review);
+            }
+            else return null;
+
     }
 
     public Review del(Long id) {

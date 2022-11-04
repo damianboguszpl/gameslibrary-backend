@@ -22,8 +22,9 @@ public class FavouriteAppService {
         FavouriteApp favouriteApp = favouriteAppRepository.findById(id).orElse(null);
 
         if (favouriteApp != null) {
+            System.out.println(newFavouriteApp.toString());
             favouriteApp.setAppId(newFavouriteApp.getAppId()!=null?newFavouriteApp.getAppId():favouriteApp.getAppId());
-            favouriteApp.setUserId(newFavouriteApp.getUserId()!=null?newFavouriteApp.getUserId():favouriteApp.getUserId());
+//            favouriteApp.setUserId(newFavouriteApp.getUserId()!=null?newFavouriteApp.getUserId():favouriteApp.getUserId());
             return favouriteAppRepository.save(favouriteApp);
         }
         else return null;
@@ -31,7 +32,7 @@ public class FavouriteAppService {
 
     @Autowired
     public FavouriteApp add(FavouriteApp favouriteApp) {
-        if(favouriteApp.getAppId() != null && favouriteApp.getUserId() != null) {
+        if(favouriteApp.getAppId() != null) {
             return favouriteAppRepository.save(favouriteApp);
         }
         else return null;
