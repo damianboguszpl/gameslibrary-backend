@@ -15,8 +15,9 @@ public class FavouriteApp {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private Long appId;
+    @ManyToOne
+    @JoinColumn(name="appId",referencedColumnName="id")
+    private App appId;
 
     @ManyToOne
     @JoinColumn(name="userId",referencedColumnName="id")

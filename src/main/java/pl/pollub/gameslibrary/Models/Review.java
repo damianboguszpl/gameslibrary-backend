@@ -16,20 +16,17 @@ public class Review {
     private Long id;
 
     @Column(nullable = false)
-    private Long appId;
-
-    @Column(nullable = false)
     private String textReview;
 
     @Column(nullable = false)
     private Integer rating;
 
-//    @ManyToOne
-//    @JoinColumn(name="userId",referencedColumnName="id")
-//    private User userId;
+    @ManyToOne
+    @JoinColumn(name="appId",referencedColumnName="id")
+    private App appId;
 
     @ManyToOne()
-    @JoinColumn(name="userId")
+    @JoinColumn(name="userId", referencedColumnName = "id")
     private User user;
 
 }
