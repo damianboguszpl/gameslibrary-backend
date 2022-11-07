@@ -1,5 +1,7 @@
 package pl.pollub.gameslibrary.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +30,10 @@ public class Review {
 //    @JoinColumn(name="userId",referencedColumnName="id")
 //    private User userId;
 
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name="userId")
+//    @JsonProperty("userId")
     private User user;
 
 }

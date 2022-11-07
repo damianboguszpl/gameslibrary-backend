@@ -1,5 +1,6 @@
 package pl.pollub.gameslibrary.Models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
@@ -18,6 +19,7 @@ public class FavouriteApp {
     @Column(nullable = false)
     private Long appId;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name="userId",referencedColumnName="id")
     private User userId;
