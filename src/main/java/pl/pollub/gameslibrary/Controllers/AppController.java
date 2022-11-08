@@ -12,27 +12,27 @@ public class AppController {
     private AppService appService;
 
     @GetMapping(path = "")
-    public Iterable<App> getAllUsers() {
+    public Iterable<App> getAllApps() {
         return appService.findAll();
     }
 
     @GetMapping(path = "/{id}")
-    public App getUserById(@PathVariable("id") Long id) {
+    public App getAppById(@PathVariable("id") Long id) {
         return appService.findById(id);
     }
 
     @PostMapping(path = "")
-    public App addUser(@RequestBody App app) {
+    public App addApp(@RequestBody App app) {
         return appService.add(app);
     }
 
     @PutMapping(path = "/{id}")
-    public App updateUser(@RequestBody App newApp, @PathVariable("id") Long id) {
+    public App updateApp(@RequestBody App newApp, @PathVariable("id") Long id) {
         return appService.edit(newApp, id);
     }
 
     @DeleteMapping(path = "/{id}")
-    public App deleteUser(@PathVariable("id") Long id) {
+    public App deleteApp(@PathVariable("id") Long id) {
         return appService.del(id);
     }
 }
