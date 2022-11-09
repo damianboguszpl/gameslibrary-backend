@@ -37,7 +37,7 @@ public class ReviewService {
 
     @Autowired
     public Review add(Review review) {
-        System.out.println(review.toString());
+//        System.out.println(review.toString());
 //        if(review.getAppId() != null && review.getTextReview() != null && review.getRating() != null && review.getUserId() != null) {
 //        if(review.getAppId() != null && review.getTextReview() != null && review.getRating() != null && review.getUser() != null) {
             if(review.getAppId() != null && review.getTextReview() != null && review.getRating() != null) {
