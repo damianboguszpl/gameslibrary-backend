@@ -28,7 +28,7 @@ public class GamesLibraryApplication {
 	@PostConstruct
 	public void loadAppsFromApi() throws IOException, InterruptedException, JSONException {
 
-		SteamApiService.pullNewApps(appService);
+//		SteamApiService.pullNewApps(appService);
 //		steamApiService.rebase(appService);
 
 	}
