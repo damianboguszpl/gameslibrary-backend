@@ -32,7 +32,12 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
 
-    @ManyToMany(fetch = EAGER)
-    private Collection<Role> roles = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name="roleId",referencedColumnName="id")
+    private Role roleID;
+
+//    @ManyToMany(fetch = EAGER)
+//    private Collection<Role> roles = new ArrayList<>();
 
 }

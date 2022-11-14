@@ -18,9 +18,6 @@ public class Review {
     private Long id;
 
     @Column(nullable = false)
-    private Long appId;
-
-    @Column(nullable = false)
     private String textReview;
 
     @Column(nullable = false)
@@ -35,5 +32,9 @@ public class Review {
     @JoinColumn(name="userId")
 //    @JsonProperty("userId")
     private User user;
+
+    @ManyToOne()
+    @JoinColumn(name="appId",referencedColumnName="id")
+    private App appId;
 
 }
