@@ -31,9 +31,9 @@ public class App {
     @Column(nullable = false)
     private String screenshotLink;
 
-    @Column(nullable = false)
+    @Column(nullable = false,columnDefinition="TEXT")
     private String developers;
 
-    @Column(nullable = false)
+    @Column(nullable = false,columnDefinition="TEXT")
     private String publishers;
 }

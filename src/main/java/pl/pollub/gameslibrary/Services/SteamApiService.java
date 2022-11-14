@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -104,8 +105,22 @@ public class SteamApiService {
         appService = appServiceO;
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest appListRequests = HttpRequest.newBuilder().uri(URI.create(appListURL)).build();
-
-        HttpResponse<String> appListResponse = client.send(appListRequests, HttpResponse.BodyHandlers.ofString());
+        
+//        HttpResponse<String> appListResponse = client.send(appListRequests, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> appListResponse = null;
+        
+        boolean goOn1 = false;
+        while(!goOn1) {
+            appListResponse = client.send(appListRequests, HttpResponse.BodyHandlers.ofString());
+            if(appListResponse.statusCode() != 200) {
+                System.out.println(appListResponse.statusCode() + "... too many requests... waiting 3s");
+                TimeUnit.MILLISECONDS.sleep(3000);
+            }
+            else { goOn1 = true; }
+        }
+//        
+        
+        
         JSONObject appListObject = new JSONObject(appListResponse.body());
         appListObject = appListObject.getJSONObject("applist");
         JSONArray appListArray = appListObject.getJSONArray("apps");
@@ -133,7 +148,8 @@ public class SteamApiService {
                         }
                         else { goOn = true; }
                     }
-
+                    System.out.println(appDetailsResponse.statusCode());
+                    System.out.println(appDetailsResponse.body());
                     JSONObject appDetailsObject = new JSONObject(appDetailsResponse.body());
                     JSONObject appDetails = appDetailsObject.getJSONObject(myJSONObject.getString("appid"));
                     try {
@@ -161,8 +177,13 @@ public class SteamApiService {
                             app.setPublishers(publishers);
 //                            System.out.println(app);
 
-                            System.out.println("app to be added");
-                            appService.add(app);
+                            if(Objects.equals(type, "game") || Objects.equals(type, "dlc")) { // move it up
+                                System.out.println("app to be added");
+                                appService.add(app);
+                            }
+                            else{
+                                System.out.println("app is not a game nor dlc");
+                            }
                         }
                     }
                     catch (JSONException exception) {
