@@ -1,6 +1,8 @@
 package pl.pollub.gameslibrary.Models;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,8 @@ import javax.persistence.*;
 @Data
 @ToString
 @Component
+@NoArgsConstructor
+@AllArgsConstructor
 public class App {
 
     @Id

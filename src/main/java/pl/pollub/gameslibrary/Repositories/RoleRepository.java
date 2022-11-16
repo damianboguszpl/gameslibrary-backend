@@ -1,8 +1,10 @@
 package pl.pollub.gameslibrary.Repositories;
 
-        import org.springframework.data.repository.CrudRepository;
-        import org.springframework.stereotype.Repository;
-        import pl.pollub.gameslibrary.Models.Role;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
+import pl.pollub.gameslibrary.Models.Role;
 
 @Repository
-public interface RoleRepository extends CrudRepository<Role, Long> {}
+public interface RoleRepository extends CrudRepository<Role, Long> {
+        Role findByName(String name);
+}

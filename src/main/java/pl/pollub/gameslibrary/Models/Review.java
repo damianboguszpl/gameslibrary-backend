@@ -7,18 +7,19 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
 
+import static javax.persistence.FetchType.EAGER;
+
 @Entity
 @Data
 @ToString
 @Component
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false)
-    private Long appId;
 
     @Column(nullable = false)
     private String textReview;
@@ -30,10 +31,14 @@ public class Review {
 //    @JoinColumn(name="userId",referencedColumnName="id")
 //    private User userId;
 
-    @JsonIgnore
+    @JsonIgnore             // to refactor ... json responses do not contain user_id contained in user
     @ManyToOne()
     @JoinColumn(name="userId")
 //    @JsonProperty("userId")
     private User user;
+
+    @ManyToOne()
+    @JoinColumn(name="appId",referencedColumnName="id")
+    private App app;
 
 }

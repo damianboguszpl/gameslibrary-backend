@@ -5,4 +5,6 @@ import org.springframework.stereotype.Repository;
 import pl.pollub.gameslibrary.Models.User;
 
 @Repository
-public interface UserRepository extends CrudRepository<User, Long> {}
+public interface UserRepository extends CrudRepository<User, Long> {
+    User findByEmail(String email);
+}
