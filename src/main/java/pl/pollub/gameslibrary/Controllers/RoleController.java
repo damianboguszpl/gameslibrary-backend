@@ -37,7 +37,7 @@ public class RoleController {
 
     @PostMapping(path = "")
     public ResponseEntity<Role> addRole(@Valid @RequestBody Role role) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/roles").toUriString());
+        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/role").toUriString());
         Role newRole = roleService.add(role);
         if (newRole != null) {
             return ResponseEntity.created(uri).body(newRole);

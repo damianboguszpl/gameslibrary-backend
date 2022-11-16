@@ -6,6 +6,7 @@ import lombok.*;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 import static javax.persistence.FetchType.EAGER;
 
@@ -26,10 +27,6 @@ public class Review {
 
     @Column(nullable = false)
     private Integer rating;
-
-//    @ManyToOne
-//    @JoinColumn(name="userId",referencedColumnName="id")
-//    private User userId;
 
     @JsonIgnore             // to refactor ... json responses do not contain user_id contained in user
     @ManyToOne()

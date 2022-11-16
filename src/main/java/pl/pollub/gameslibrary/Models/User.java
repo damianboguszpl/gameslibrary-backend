@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static javax.persistence.FetchType.EAGER;
+import static javax.persistence.FetchType.LAZY;
 
 @Entity
 @Data
@@ -34,7 +35,7 @@ public class User {
     @NotBlank(message = "Password is mandatory")
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = LAZY)
     private Collection<Review> reviews = new ArrayList<>();
 
     @ManyToMany(fetch = EAGER) // whenever user will be loaded, his roles will be loaded too

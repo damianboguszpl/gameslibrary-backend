@@ -20,8 +20,6 @@ import pl.pollub.gameslibrary.Services.UserService;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-//import org.springframework.security.crypto.password.PasswordEncoder;
 
 //@Slf4j
 @SpringBootApplication

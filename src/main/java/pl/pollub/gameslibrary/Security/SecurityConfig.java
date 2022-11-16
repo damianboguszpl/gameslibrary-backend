@@ -47,13 +47,14 @@ public class SecurityConfig {
                 .antMatchers(GET, "/user/**").hasAnyAuthority("USER_ROLE")
                 .antMatchers(GET, "/role/**").hasAnyAuthority("USER_ROLE")
                 .antMatchers(GET, "/app/**").hasAnyAuthority("USER_ROLE")
-                .antMatchers(GET, "/review/**").hasAnyAuthority("USER_ROLE")
+                .antMatchers(GET, "/review/**").permitAll()
+//                .antMatchers(GET, "/review/**").hasAnyAuthority("USER_ROLE")
                 .antMatchers(GET, "/favapp/**").hasAnyAuthority("USER_ROLE")
                 .antMatchers(POST, "/user/**").hasAnyAuthority("ADMIN_ROLE")
                 .antMatchers(POST, "/role/**").hasAnyAuthority("ADMIN_ROLE")
                 .antMatchers(POST, "/app/**").hasAnyAuthority("ADMIN_ROLE")
-                .antMatchers(POST, "/review/**").hasAnyAuthority("ADMIN_ROLE")
-                .antMatchers(POST, "/favapp/**").hasAnyAuthority("ADMIN_ROLE")
+                .antMatchers(POST, "/review/**").hasAnyAuthority("USER_ROLE")
+                .antMatchers(POST, "/favapp/**").hasAnyAuthority("USER_ROLE")
                 .anyRequest().authenticated();
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
