@@ -1,5 +1,6 @@
 package pl.pollub.gameslibrary.Controllers;
 
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pl.pollub.gameslibrary.Models.Review;
@@ -22,8 +23,8 @@ public class ReviewController {
     }
 
     @PostMapping(path = "")
-    public Review addReview(@RequestBody Review review) {
-        return reviewService.add(review);
+    public Review addReview(@RequestBody ReviewForm form) {
+        return reviewService.add(form.getAppId(), form.getUserEmail(), form.getTextReview(), form.getRating());
     }
 
     @PutMapping(path = "/{id}")
@@ -35,4 +36,12 @@ public class ReviewController {
     public Review deleteReview(@PathVariable("id") Long id) {
         return reviewService.del(id);
     }
+}
+
+@Data
+class ReviewForm {
+    private Long appId;
+    private String userEmail;
+    private String textReview;
+    private Integer rating;
 }
