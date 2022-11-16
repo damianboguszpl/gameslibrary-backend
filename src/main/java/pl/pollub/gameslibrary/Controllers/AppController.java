@@ -6,7 +6,7 @@ import pl.pollub.gameslibrary.Models.App;
 import pl.pollub.gameslibrary.Services.AppService;
 
 @RestController
-@RequestMapping(path="/apps")
+@RequestMapping(path="/app")
 public class AppController {
     @Autowired
     private AppService appService;
