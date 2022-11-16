@@ -12,6 +12,7 @@ import pl.pollub.gameslibrary.Repositories.ReviewRepository;
 import pl.pollub.gameslibrary.Repositories.UserRepository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,6 +33,17 @@ public class ReviewServiceImpl implements ReviewService{
 
     public Review findById(Long id) {
         return reviewRepository.findById(id).orElse(null);
+    }
+
+    public List<Review> getByUserEmail(String userEmail) {
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmail(userEmail));
+
+        if(userOptional.isPresent()) {
+            User user = userOptional.get();
+            log.info("user: {}", user.getEmail());
+            return reviewRepository.findByUserIs(user);
+        }
+        else return null;
     }
 
     public Review edit(Review newReview, Long id) {
