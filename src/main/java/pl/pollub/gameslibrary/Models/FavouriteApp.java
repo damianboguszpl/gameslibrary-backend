@@ -10,6 +10,8 @@ import javax.persistence.*;
 @Data
 @ToString
 @Component
+@NoArgsConstructor
+@AllArgsConstructor
 public class FavouriteApp {
 
     @Id

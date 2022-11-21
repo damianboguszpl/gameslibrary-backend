@@ -6,11 +6,16 @@ import lombok.*;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+
+import static javax.persistence.FetchType.EAGER;
 
 @Entity
 @Data
 @ToString
 @Component
+@NoArgsConstructor
+@AllArgsConstructor
 public class Review {
 
     @Id
@@ -18,22 +23,19 @@ public class Review {
     private Long id;
 
     @Column(nullable = false)
-    private Long appId;
-
-    @Column(nullable = false)
     private String textReview;
 
     @Column(nullable = false)
     private Integer rating;
 
-//    @ManyToOne
-//    @JoinColumn(name="userId",referencedColumnName="id")
-//    private User userId;
-
-    @JsonIgnore
+    @JsonIgnore             // to refactor ... json responses do not contain user_id contained in user
     @ManyToOne()
     @JoinColumn(name="userId")
 //    @JsonProperty("userId")
     private User user;
+
+    @ManyToOne()
+    @JoinColumn(name="appId",referencedColumnName="id")
+    private App app;
 
 }
