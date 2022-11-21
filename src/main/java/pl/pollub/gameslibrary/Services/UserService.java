@@ -1,11 +1,13 @@
 package pl.pollub.gameslibrary.Services;
 
 import at.favre.lib.crypto.bcrypt.BCrypt;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pollub.gameslibrary.Models.User;
 import pl.pollub.gameslibrary.Repositories.UserRepository;
 
+@AllArgsConstructor
 @Service
 public class UserService {
     @Autowired
