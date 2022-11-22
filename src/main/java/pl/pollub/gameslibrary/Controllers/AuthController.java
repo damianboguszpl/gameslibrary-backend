@@ -17,6 +17,7 @@ import pl.pollub.gameslibrary.Services.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,11 +49,14 @@ public class AuthController {
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("roles", user.getRoles().stream().map(Role::getName).collect(Collectors.toList()))
                         .sign(algorithm);
-                Map<String, String> tokens = new HashMap<>();
-                tokens.put("access_token", access_token);
-                tokens.put("refresh_token", refresh_token);
+                Map<String, String> result = new HashMap<>();
+                result.put("access_token", access_token);
+                result.put("refresh_token", refresh_token);
+                result.put("email", email);
+                result.put("id", Long.toString(user.getId()));
+
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
+                new ObjectMapper().writeValue(response.getOutputStream(), result);
             }catch (Exception exception) {
                 response.setHeader("error", exception.getMessage());
                 response.setStatus(FORBIDDEN.value());
@@ -66,31 +70,5 @@ public class AuthController {
             throw new RuntimeException("Refresh token is missing");
         }
     }
-//    @Autowired
-//    private UserService userService;
-//
-//    @GetMapping(path = "")
-//    public Iterable<User> getAllUsers() {
-//        return userService.findAll();
-//    }
-//
-//    @GetMapping (path = "/{id}")
-//    public User getUserById(@PathVariable("id") Long id) {
-//        return userService.findById(id);
-//    }
-//
-//    @PostMapping(path = "")
-//    public User addUser(@RequestBody User user) {
-//        return userService.add(user);
-//    }
-//
-//    @PutMapping(path = "/{id}")
-//    public User updateUser(@RequestBody User newUser, @PathVariable("id") Long id) {
-//        return userService.edit(newUser, id);
-//    }
-//
-//    @DeleteMapping(path = "/{id}")
-//    public User deleteUser(@PathVariable("id") Long id) {
-//        return userService.del(id);
-//    }
+
 }

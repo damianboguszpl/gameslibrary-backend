@@ -53,6 +53,10 @@ public class GamesLibraryApplication {
 			roleService.addRoleToUser("admin@email.com", "USER_ROLE");
 			roleService.addRoleToUser("admin@email.com", "ADMIN_ROLE");
 
+			userService.add(new User(null, "arturnowak4@gmail.com", "arturnowak4@gmail.com", "Ab3c@dlo12", new ArrayList<>(), new ArrayList<>()));
+			roleService.addRoleToUser("arturnowak4@gmail.com", "USER_ROLE");
+			roleService.addRoleToUser("arturnowak4@gmail.com", "ADMIN_ROLE");
+
 		};
 	}
 
