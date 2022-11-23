@@ -81,7 +81,7 @@ public class SecurityConfig {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // **permit OPTIONS call to all**
 
-                .antMatchers("/auth/login/**", "/token/refresh/**").permitAll()
+                .antMatchers("/auth/login/**", "/auth/token/refresh/**").permitAll()
                 .antMatchers(POST,"/user").permitAll()
 //                .antMatchers(GET,"/user/email/**").permitAll()
                 .antMatchers(GET, "/app/**").permitAll()
