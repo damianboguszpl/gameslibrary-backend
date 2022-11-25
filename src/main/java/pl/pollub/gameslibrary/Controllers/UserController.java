@@ -16,6 +16,7 @@ import pl.pollub.gameslibrary.Services.UserService;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -30,11 +31,7 @@ public class UserController {
     @PostMapping(path = "/register")
     public ResponseEntity<DetailedResponse> addUser(@RequestBody User user){
         ResponseEntity<DetailedResponse> newUser = userService.add(user);
-        if (newUser != null)
-            return newUser;
-        else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+        return Objects.requireNonNullElseGet(newUser, () -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null));
     }
 
     @PutMapping(path = "/{id}")
