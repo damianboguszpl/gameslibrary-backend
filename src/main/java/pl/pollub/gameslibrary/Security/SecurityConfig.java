@@ -22,8 +22,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import pl.pollub.gameslibrary.Filters.CustomAuthenticationFilter;
 import pl.pollub.gameslibrary.Filters.CustomAuthorizationFilter;
 
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @EnableWebSecurity
@@ -64,13 +63,14 @@ public class SecurityConfig {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // **permit OPTIONS call to all**
 
-                .antMatchers("/auth/login/**", "/auth/token/refresh/**").permitAll()
+                .antMatchers("/auth/login/**", "/user/register/**", "/auth/token/refresh/**").permitAll()
 
                 .antMatchers(POST, "/role/**").hasAnyAuthority("ADMIN_ROLE")
                 .antMatchers(GET, "/role/**").hasAnyAuthority("USER_ROLE")
 
                 .antMatchers(POST,"/user").permitAll()
                 .antMatchers(POST, "/user/**").hasAnyAuthority("ADMIN_ROLE")    // to check
+                .antMatchers(PUT, "/user/**").hasAnyAuthority("USER_ROLE")
 //                .antMatchers(GET,"/user/email/**").permitAll()
                 .antMatchers(GET, "/user/**").hasAnyAuthority("USER_ROLE")
 
