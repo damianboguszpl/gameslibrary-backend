@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import pl.pollub.gameslibrary.Exceptions.Exceptions.*;
-import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
+import pl.pollub.gameslibrary.Models.Utility.DetailedUserResponse;
 import pl.pollub.gameslibrary.Models.User;
 import pl.pollub.gameslibrary.Repositories.UserRepository;
 
@@ -36,35 +36,35 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final RoleService roleService;
 
     @Autowired
-    public ResponseEntity<DetailedResponse> add(User user) {
+    public ResponseEntity<DetailedUserResponse> add(User user) {
         if (user != null) {
             if (user.getEmail() == null)
                 return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
-                        .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "E-mail jest pusty.", null));
+                        .body(new DetailedUserResponse("INCORRECT_REQUEST_DATA", "E-mail jest pusty.", null));
             if(user.getLogin() != null) {
                 String loginValidationRegex = "^[a-zA-Z0-9._-]{3,}$";
                 Pattern pattern = Pattern.compile(loginValidationRegex);
                 Matcher matcher = pattern.matcher(user.getLogin());
                 if (!matcher.matches()) return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
-                        .body(new DetailedResponse("LOGIN_NOT_VALID", "Login nie spełnia zasad poprawności.", null));
+                        .body(new DetailedUserResponse("LOGIN_NOT_VALID", "Login nie spełnia zasad poprawności.", null));
             }
             else return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Login jest pusty.", null));
+                    .body(new DetailedUserResponse("INCORRECT_REQUEST_DATA", "Login jest pusty.", null));
 
             User existingUser = userRepository.findByEmail(user.getEmail());
             if (existingUser != null)
                 return ResponseEntity
                         .status(HttpStatus.CONFLICT)
-                        .body(new DetailedResponse("EMAIL_ALREADY_TAKEN", "Podany adres e-mail wykorzystuje istniejące już konto.", null));
+                        .body(new DetailedUserResponse("EMAIL_ALREADY_TAKEN", "Podany adres e-mail wykorzystuje istniejące już konto.", null));
             else {
                 existingUser = userRepository.findByLogin(user.getLogin());
                 if (existingUser != null)
                     return ResponseEntity
                             .status(HttpStatus.CONFLICT)
-                            .body(new DetailedResponse("LOGIN_ALREADY_TAKEN", "Podany login jest już zajęty.", null));
+                            .body(new DetailedUserResponse("LOGIN_ALREADY_TAKEN", "Podany login jest już zajęty.", null));
             }
 
             if(user.getPassword() != null) {
@@ -78,21 +78,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     roleService.addRoleToUser(user.getEmail(), "USER_ROLE");
                     return ResponseEntity
                             .status(HttpStatus.CREATED)
-                            .body(new DetailedResponse("USER_REGISTERED_SUCCESSFULLY", "", null));
+                            .body(new DetailedUserResponse("USER_REGISTERED_SUCCESSFULLY", "", null));
                 }
                 else
                     return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
-                        .body(new DetailedResponse("PASSWORD_NOT_VALID", "Hasło nie spełnia zasad poprawności.", null));
+                        .body(new DetailedUserResponse("PASSWORD_NOT_VALID", "Hasło nie spełnia zasad poprawności.", null));
             }
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Hasło jest puste.", null));
+                    .body(new DetailedUserResponse("INCORRECT_REQUEST_DATA", "Hasło jest puste.", null));
         }
         else
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Zapytanie nie zawiera poprawnych danych.", null));
+                    .body(new DetailedUserResponse("INCORRECT_REQUEST_DATA", "Zapytanie nie zawiera poprawnych danych.", null));
     }
 
     public User edit(User newUser, Long id) throws UserNotFoundException, IncorrectRequestDataException {
@@ -119,13 +119,13 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
     }
 
-    public ResponseEntity<DetailedResponse> delete(Long id) throws UserNotFoundException {
+    public ResponseEntity<DetailedUserResponse> delete(Long id) throws UserNotFoundException {
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
             userRepository.deleteById(id);
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new DetailedResponse("USER_DELETED", "Użytkownik został usunięty.", null));
+                    .body(new DetailedUserResponse("USER_DELETED", "Użytkownik został usunięty.", null));
         }
         else
             throw new UserNotFoundException();

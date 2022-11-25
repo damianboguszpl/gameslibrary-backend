@@ -4,12 +4,12 @@ import lombok.Getter;
 import pl.pollub.gameslibrary.Models.UserDto;
 
 @Getter
-public class DetailedResponse {
+public class DetailedUserResponse {
     private final String code;
     private final String message;
     private final UserDto data;
 
-    public DetailedResponse(String code, String message, UserDto data) {
+    public DetailedUserResponse(String code, String message, UserDto data) {
         this.code = code;
         this.message = message;
         this.data = data;
