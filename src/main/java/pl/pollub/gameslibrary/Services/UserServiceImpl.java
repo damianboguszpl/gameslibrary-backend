@@ -78,7 +78,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     roleService.addRoleToUser(user.getEmail(), "USER_ROLE");
                     return ResponseEntity
                             .status(HttpStatus.CREATED)
-                            .body(new DetailedResponse("USER_REGISTERED_SUCCESSFULLY", "", null));
+                            .body(new DetailedResponse("NEW_USER_REGISTERED", "", null));
                 }
                 else
                     return ResponseEntity
@@ -133,10 +133,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     public List<User> getAll(){
         List<User> users = (List<User>) userRepository.findAll();
-        if(!users.isEmpty())
-            return users;
-        else
-            return null;
+        return !users.isEmpty() ? users : null;
     }
 
     public User getByEmail(String email) {
