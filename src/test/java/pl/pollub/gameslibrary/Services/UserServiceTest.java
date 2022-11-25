@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pl.pollub.gameslibrary.Models.Utility.DetailedUserResponse;
+import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
 import pl.pollub.gameslibrary.Exceptions.Exceptions.IncorrectRequestDataException;
 import pl.pollub.gameslibrary.Exceptions.Exceptions.UserNotFoundException;
 import pl.pollub.gameslibrary.Models.User;
@@ -132,7 +132,7 @@ class UserServiceTest {
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
-        ResponseEntity<DetailedUserResponse> result = null;
+        ResponseEntity<DetailedResponse> result = null;
         try {
             result = underTest.delete(id);
         } catch (UserNotFoundException e) {

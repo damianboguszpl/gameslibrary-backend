@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.pollub.gameslibrary.Models.Utility.DetailedUserResponse;
+import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
 import pl.pollub.gameslibrary.Exceptions.Exceptions.*;
 import pl.pollub.gameslibrary.Models.User;
 import pl.pollub.gameslibrary.Models.UserDto;
@@ -28,8 +28,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping(path = "/register")
-    public ResponseEntity<DetailedUserResponse> addUser(@RequestBody User user){
-        ResponseEntity<DetailedUserResponse> newUser = userService.add(user);
+    public ResponseEntity<DetailedResponse> addUser(@RequestBody User user){
+        ResponseEntity<DetailedResponse> newUser = userService.add(user);
         if (newUser != null)
             return newUser;
         else {
@@ -38,15 +38,15 @@ public class UserController {
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<DetailedUserResponse> updateUser(@RequestBody User user, @PathVariable("id") Long id) throws UserNotFoundException, IncorrectRequestDataException {
+    public ResponseEntity<DetailedResponse> updateUser(@RequestBody User user, @PathVariable("id") Long id) throws UserNotFoundException, IncorrectRequestDataException {
         UserDto userDto = modelMapper.map(userService.edit(user, id),UserDto.class);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new DetailedUserResponse("USER_UPDATED", "Dane użytkownika zostały zaktualizowane.", userDto));
+                .body(new DetailedResponse("USER_UPDATED", "Dane użytkownika zostały zaktualizowane.", userDto));
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<DetailedUserResponse> deleteUser(@PathVariable("id") Long id) throws UserNotFoundException {
+    public ResponseEntity<DetailedResponse> deleteUser(@PathVariable("id") Long id) throws UserNotFoundException {
         return userService.delete(id);
     }
 
@@ -62,7 +62,7 @@ public class UserController {
         else
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedUserResponse("Nie znaleziono żadnych użytkowników.", "", null));
+                    .body(new DetailedResponse("Nie znaleziono żadnych użytkowników.", "", null));
     }
 
     @GetMapping (path = "/{id}")
@@ -75,7 +75,7 @@ public class UserController {
         else
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedUserResponse("USER_NOT_FOUND", "Szukany użytkownik nie istnieje.", null));
+                    .body(new DetailedResponse("USER_NOT_FOUND", "Szukany użytkownik nie istnieje.", null));
     }
 
     @GetMapping (path = "/email/{email}")
@@ -88,6 +88,6 @@ public class UserController {
         else
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedUserResponse("USER_NOT_FOUND", "Szukany użytkownik nie istnieje.", null));
+                    .body(new DetailedResponse("USER_NOT_FOUND", "Szukany użytkownik nie istnieje.", null));
     }
 }
