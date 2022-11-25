@@ -11,7 +11,7 @@ import pl.pollub.gameslibrary.Exceptions.Exceptions.IncorrectRequestDataExceptio
 public class GeneralExceptionHandler {
     @ExceptionHandler(IncorrectRequestDataException.class)
     public ResponseEntity<DetailedResponse> onIncorrectRequestDataException(IncorrectRequestDataException e) {
-        String message = "Zapytanie nie zawiera poprawnych danych.";
+        String message = "Request does not contain required data.";
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new DetailedResponse("INCORRECT_REQUEST_DATA", message, null));
