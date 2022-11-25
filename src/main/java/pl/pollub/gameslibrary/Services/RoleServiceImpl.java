@@ -3,13 +3,20 @@ package pl.pollub.gameslibrary.Services;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import pl.pollub.gameslibrary.Exceptions.Exceptions.IncorrectRequestDataException;
+import pl.pollub.gameslibrary.Exceptions.Exceptions.RoleNotFoundException;
 import pl.pollub.gameslibrary.Models.Role;
 import pl.pollub.gameslibrary.Models.User;
+import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
 import pl.pollub.gameslibrary.Repositories.RoleRepository;
 import pl.pollub.gameslibrary.Repositories.UserRepository;
 
 import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,73 +28,144 @@ public class RoleServiceImpl implements RoleService {
     @Autowired
     private final RoleRepository roleRepository;
 
-    public Iterable<Role> getAll() {
-        return roleRepository.findAll();
+    @Autowired
+    public ResponseEntity<DetailedResponse> add(Role role) {
+        if (role != null) {
+            if (role.getName() == null)
+                return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Name parameter not specified.", null));
+
+            Role existingRole = roleRepository.findByName(role.getName());
+            if (existingRole != null) {
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(new DetailedResponse("ROLE_ALREADY_EXISTS", "A Role with same name name as given already exists.", null));
+            }
+            else {
+                roleRepository.save(role);
+                return ResponseEntity
+                        .status(HttpStatus.CREATED)
+                        .body(new DetailedResponse("NEW_ROLE_CREATED", "New Role has been created.", null));
+            }
+        }
+        else
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Request does not contain required data.", null));
     }
 
-    public Role findById(Long id) {
-        return roleRepository.findById(id).orElse(null);
-    }
-
-    public Role edit(Role newRole, Long id) {
+    public Role edit(Role newRole, Long id) throws IncorrectRequestDataException, RoleNotFoundException {
+        if(newRole.getName() == null || id == null) {
+            throw new IncorrectRequestDataException();
+        }
         Role role = roleRepository.findById(id).orElse(null);
         if (role != null) {
             role.setName(newRole.getName()!=null?newRole.getName():role.getName());
             return roleRepository.save(role);
         }
-        else return null;
-    }
-    @Autowired
-    public Role add(Role role) {
-        if (role != null) {
-            Role existingRole = roleRepository.findByName(role.getName());
-
-            if (existingRole != null) {
-                log.info("Role: {} already exists", role.getName());
-                return null;
-            }
-            else {
-                if(role.getName() != null) {
-                    log.info("Saving new Role: {}", role.getName());
-                    return roleRepository.save(role);
-                }
-                else return null;
-            }
-
-        }
-        else return null;
+        else
+            throw new RoleNotFoundException();
     }
 
-    public Role del(Long id) {
+    public ResponseEntity<DetailedResponse> delete(Long id) throws RoleNotFoundException {
         Role role = roleRepository.findById(id).orElse(null);
-
         if (role != null) {
-            roleRepository.deleteById(id);
-            return role;
+            List<User> users = (List<User>) userRepository.findAll();
+            User userWithRole = users.stream().filter( user -> user.getRoles().contains(role)).findAny().orElse(null);
+            if(userWithRole == null) {
+                roleRepository.deleteById(id);
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(new DetailedResponse("ROLE_DELETED", "Role has been deleted.", null));
+            }
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("ROLE_IS_USED", "Role is being used by at least one User and can not be deleted.", null));
         }
-        else return null;
+        else
+            throw new RoleNotFoundException();
     }
 
-    public void addRoleToUser(String email, String roleName) {
+    public Iterable<Role> getAll() {
+        List<Role> roles = (List<Role>) roleRepository.findAll();
+        return !roles.isEmpty() ? roles : null;
+    }
+
+    public Role getById(Long id) {
+        Optional<Role> roleOptional = roleRepository.findById(id);
+        return roleOptional.orElse(null);
+    }
+
+    public ResponseEntity<DetailedResponse> addRoleToUser(String email, String roleName) {
+        if (email == null)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("EMAIL_NOT_SPECIFIED", "Email parameter is not specified.", null));
+        if (roleName == null)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("ROLE_NAME_NOT_SPECIFIED", "RoleName parameter is not specified.", null));
+
         User user = userRepository.findByEmail(email);
+        if(user == null)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("USER_NOT_FOUND", "User has not been found.", null));
         Role role = roleRepository.findByName(roleName);
+        if(role == null)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("ROLE_NOT_FOUND", "Role has not been found.", null));
 
         if(user.getRoles().contains(role)) {
             log.info("User: {} already has Role: {}", email, roleName);
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(new DetailedResponse("ROLE_ALREADY_ASSIGNED", "User already has the Role assigned.", null));
         }
         else {
             log.info("Adding Role: {} to User: {}", roleName, email);
             user.getRoles().add(role);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new DetailedResponse("ROLE_ASSIGNED", "New Role has been assigned to User.", null));
         }
     }
 
-    public void delRoleFromUser(String email, String roleName) {
+    public ResponseEntity<DetailedResponse> delRoleFromUser(String email, String roleName) {
+        if (email == null)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("EMAIL_NOT_SPECIFIED", "Email parameter is not specified.", null));
+        if (roleName == null)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("ROLE_NAME_NOT_SPECIFIED", "RoleName parameter is not specified.", null));
+
         User user = userRepository.findByEmail(email);
+        if(user == null)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("USER_NOT_FOUND", "User has not been found.", null));
         Role role = roleRepository.findByName(roleName);
+        if(role == null)
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("ROLE_NOT_FOUND", "Role has not been found.", null));
+
         if(user.getRoles().contains(role)) {
             log.info("Deleting Role: {} from User: {}", roleName, email);
             user.getRoles().remove(role);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new DetailedResponse("ROLE_REVOKED", "The Role has been taken from User.", null));
         }
-        log.info("User: {} have not got Role: {}", email, roleName);
+        else {
+            log.info("User: {} have not got Role: {}", email, roleName);
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(new DetailedResponse("ROLE_NOT_OWNED", "User already does not own the Role.", null));
+        }
     }
 }
