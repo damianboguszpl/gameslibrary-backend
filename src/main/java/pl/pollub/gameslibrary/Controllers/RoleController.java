@@ -5,17 +5,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pl.pollub.gameslibrary.Exceptions.Exceptions.IncorrectRequestDataException;
+import pl.pollub.gameslibrary.Exceptions.Exceptions.RoleNotFoundException;
 import pl.pollub.gameslibrary.Models.Role;
+import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
 import pl.pollub.gameslibrary.Services.RoleService;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping(path="/role")
@@ -24,6 +21,25 @@ public class RoleController {
     @Autowired
     private final RoleService roleService;
 
+    @PostMapping(path = "")
+    public ResponseEntity<DetailedResponse> addRole(@RequestBody Role role) {
+        ResponseEntity<DetailedResponse> newRole = roleService.add(role);
+        return Objects.requireNonNullElseGet(newRole, () -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null));
+    }
+
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<DetailedResponse>  updateRole(@RequestBody Role newRole, @PathVariable("id") Long id) throws RoleNotFoundException, IncorrectRequestDataException {
+        Role role = roleService.edit(newRole, id);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new DetailedResponse("ROLE_UPDATED", "Role details have been updated.", role));
+    }
+
+    @DeleteMapping(path = "/{id}")
+    public ResponseEntity<DetailedResponse> deleteRole(@PathVariable("id") Long id) throws RoleNotFoundException {
+        return roleService.delete(id);
+    }
+
     @GetMapping(path = "")
     public ResponseEntity<Iterable<Role>> getAllRoles() {
         return ResponseEntity.ok().body(roleService.getAll());
@@ -31,56 +47,31 @@ public class RoleController {
 
     @GetMapping (path = "/{id}")
     public Role getRoleById(@PathVariable("id") Long id) {
-        return roleService.findById(id);
+        return roleService.getById(id);
     }
 
-    @PostMapping(path = "")
-    public ResponseEntity<Role> addRole(@Valid @RequestBody Role role) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/role").toUriString());
-        Role newRole = roleService.add(role);
-        if (newRole != null) {
-            return ResponseEntity.created(uri).body(newRole);
-        }
-        else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
-        }
+    @PostMapping(path = "/user/addrole")
+    public ResponseEntity<DetailedResponse> addRoleToUser(@RequestBody RoleToUserForm form) {
+        return roleService.addRoleToUser(form.getEmail(),form.getRoleName());
     }
 
-    @PostMapping(path = "/user")
-    public ResponseEntity<?> addRoleToUser(@RequestBody RoleToUserForm form) {
-        roleService.addRoleToUser(form.getEmail(),form.getRoleName());
-        return ResponseEntity.ok().build();
+    @PostMapping(path = "/user/delrole")
+    public ResponseEntity<DetailedResponse> delRoleFromUser(@RequestBody RoleToUserForm form) {
+        return roleService.delRoleFromUser(form.getEmail(),form.getRoleName());
     }
 
-    @PostMapping(path = "/user/role/del")
-    public ResponseEntity<?> delRoleFromUser(@RequestBody RoleToUserForm form) {
-        roleService.delRoleFromUser(form.getEmail(),form.getRoleName());
-        return ResponseEntity.ok().build();
-    }
-
-
-    @PutMapping(path = "/{id}")
-    public Role updateRole(@RequestBody Role newRole, @PathVariable("id") Long id) {
-        return roleService.edit(newRole, id);
-    }
-
-    @DeleteMapping(path = "/{id}")
-    public Role deleteRole(@PathVariable("id") Long id) {
-        return roleService.del(id);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
-    }
+//    @ResponseStatus(HttpStatus.BAD_REQUEST)
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public Map<String, String> handleValidationExceptions(
+//            MethodArgumentNotValidException ex) {
+//        Map<String, String> errors = new HashMap<>();
+//        ex.getBindingResult().getAllErrors().forEach((error) -> {
+//            String fieldName = ((FieldError) error).getField();
+//            String errorMessage = error.getDefaultMessage();
+//            errors.put(fieldName, errorMessage);
+//        });
+//        return errors;
+//    }
 }
 
 @Data
