@@ -3,7 +3,6 @@ package pl.pollub.gameslibrary.Models;
 import lombok.*;
 import org.springframework.stereotype.Component;
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Entity
 @Data
@@ -17,6 +16,5 @@ public class Role {
     private Long id;
 
     @Column(nullable = false)
-    @NotBlank(message = "Name is mandatory")
     private String name;
 }
