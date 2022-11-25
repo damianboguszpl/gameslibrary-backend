@@ -10,7 +10,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import pl.pollub.gameslibrary.Models.Role;
-import pl.pollub.gameslibrary.Models.User;
 import pl.pollub.gameslibrary.Services.RoleService;
 
 import javax.validation.Valid;
