@@ -11,7 +11,7 @@ import pl.pollub.gameslibrary.Exceptions.Exceptions.*;
 public class UserExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<DetailedResponse> onUserNotFoundException() {
-        String message = "Szukany użytkownik nie istnieje.";
+        String message = "User does not exist.";
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new DetailedResponse("USER_NOT_FOUND", message, null));
