@@ -1,7 +1,6 @@
 package pl.pollub.gameslibrary;
 
-import lombok.extern.slf4j.Slf4j;
-import org.json.JSONException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -12,13 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pl.pollub.gameslibrary.Models.Role;
 import pl.pollub.gameslibrary.Models.User;
-import pl.pollub.gameslibrary.Services.AppService;
-import pl.pollub.gameslibrary.Services.RoleService;
-import pl.pollub.gameslibrary.Services.SteamApiService;
-import pl.pollub.gameslibrary.Services.UserService;
+import pl.pollub.gameslibrary.Services.*;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.ArrayList;
 
 //@Slf4j
@@ -33,6 +27,11 @@ public class GamesLibraryApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(GamesLibraryApplication.class, args);
+	}
+
+	@Bean
+	public ModelMapper modelMapper() {
+		return new ModelMapper();
 	}
 
 	@Bean
