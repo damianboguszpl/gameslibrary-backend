@@ -6,24 +6,26 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
+import pl.pollub.gameslibrary.Exceptions.Exceptions.IncorrectRequestDataException;
+import pl.pollub.gameslibrary.Exceptions.Exceptions.UserNotFoundException;
 import pl.pollub.gameslibrary.Models.User;
-import pl.pollub.gameslibrary.Repositories.RoleRepository;
 import pl.pollub.gameslibrary.Repositories.UserRepository;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
-    @Mock
-    RoleRepository roleRepository;
     @Mock
     PasswordEncoder passwordEncoder;
     @Mock
@@ -34,7 +36,6 @@ class UserServiceTest {
     void setUp() {
         underTest = new UserServiceImpl(
                 userRepository,
-                roleRepository,
                 passwordEncoder,
                 roleService);
     }
@@ -73,12 +74,16 @@ class UserServiceTest {
         );
 
         underTest.add(user);
-        ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
-        verify(userRepository).save(argumentCaptor.capture());
 
-        User capturedUser = argumentCaptor.getValue();
-        assertThat(capturedUser).isEqualTo(user);
+        ArgumentCaptor<String> emailCaptor = ArgumentCaptor.forClass(String.class);
+        verify(userRepository).findByEmail(emailCaptor.capture());
+        String capturedEmail = emailCaptor.getValue();
+        assertThat(capturedEmail).isEqualTo(user.getEmail());
 
+        ArgumentCaptor<String> loginCaptor = ArgumentCaptor.forClass(String.class);
+        verify(userRepository).findByLogin(loginCaptor.capture());
+        String capturedLogin = loginCaptor.getValue();
+        assertThat(capturedLogin).isEqualTo(user.getLogin());
     }
 
     @Test
@@ -112,7 +117,11 @@ class UserServiceTest {
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
-        underTest.edit(newUser,id);
+        try {
+            underTest.edit(newUser,id);
+        } catch (UserNotFoundException | IncorrectRequestDataException e) {
+            e.printStackTrace();
+        }
         verify(userRepository).save(userInRepo);
     }
 
@@ -123,9 +132,20 @@ class UserServiceTest {
 
         when(userRepository.findById(id)).thenReturn(Optional.of(user));
 
-        User result = underTest.delete(id);
+        ResponseEntity<DetailedResponse> result = null;
+        try {
+            result = underTest.delete(id);
+        } catch (UserNotFoundException e) {
+            e.printStackTrace();
+        }
         verify(userRepository).deleteById(id);
 
-        assertThat(result).isEqualTo(user);
+        assert result != null;
+        assertThat(result.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        assertThat(Objects.requireNonNull(result.getBody()).getCode()).isEqualTo("USER_DELETED");
+        assertThat(result.getBody().getMessage()).isEqualTo("Użytkownik został usunięty.");
+        assertThat(result.getBody().getData()).isEqualTo(null);
+
     }
 }
