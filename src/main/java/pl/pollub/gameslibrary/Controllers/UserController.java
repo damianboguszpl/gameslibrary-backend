@@ -1,75 +1,93 @@
 package pl.pollub.gameslibrary.Controllers;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
+import pl.pollub.gameslibrary.Exceptions.Exceptions.*;
 import pl.pollub.gameslibrary.Models.User;
+import pl.pollub.gameslibrary.Models.UserDto;
 import pl.pollub.gameslibrary.Services.UserService;
 
-import javax.validation.Valid;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path="/user")
 public class UserController {
-//    @Autowired
+    @Autowired
+    private ModelMapper modelMapper;
+
     private final UserService userService;
 
-    @GetMapping(path = "")
-    public ResponseEntity<Iterable<User>> getAllUsers() {
-        return ResponseEntity.ok().body(userService.getAll());
-    }
-
-    @GetMapping (path = "/{id}")
-    public User getUserById(@PathVariable("id") Long id) {
-        return userService.getById(id);
-    }
-
-    @GetMapping (path = "/email/{email}")
-    public User getUserByEmail(@PathVariable("email") String email) {
-        return userService.getByEmail(email);
-    }
-
-    @PostMapping(path = "")
-    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
-        URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/users").toUriString());
-        User newUser = userService.add(user);
-        if (newUser != null) {
-            return ResponseEntity.created(uri).body(newUser);
-        }
+    @PostMapping(path = "/register")
+    public ResponseEntity<DetailedResponse> addUser(@RequestBody User user){
+        ResponseEntity<DetailedResponse> newUser = userService.add(user);
+        if (newUser != null)
+            return newUser;
         else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
     @PutMapping(path = "/{id}")
-    public User updateUser(@RequestBody User newUser, @PathVariable("id") Long id) {
-        return userService.edit(newUser, id);
+    public ResponseEntity<DetailedResponse> updateUser(@RequestBody User user, @PathVariable("id") Long id) throws UserNotFoundException, IncorrectRequestDataException {
+        UserDto userDto = modelMapper.map(userService.edit(user, id),UserDto.class);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(new DetailedResponse("USER_UPDATED", "Dane użytkownika zostały zaktualizowane.", userDto));
     }
 
     @DeleteMapping(path = "/{id}")
-    public User deleteUser(@PathVariable("id") Long id) {
+    public ResponseEntity<DetailedResponse> deleteUser(@PathVariable("id") Long id) throws UserNotFoundException {
         return userService.delete(id);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        return errors;
+    @GetMapping(path = "")
+    public ResponseEntity<Object> getAllUsers() {
+        List<User> users = (List<User>) userService.getAll();
+
+        if(!users.isEmpty()) {
+            Type listType = new TypeToken<List<UserDto>>(){}.getType();
+            List<UserDto> usersDto = modelMapper.map(users,listType);
+            return ResponseEntity.ok().body(usersDto);
+        }
+        else
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("Nie znaleziono żadnych użytkowników.", "", null));
+    }
+
+    @GetMapping (path = "/{id}")
+    public ResponseEntity<Object> getUserById(@PathVariable("id") Long id) {
+        User user = userService.getById(id);
+        if(user != null) {
+            UserDto userDto = modelMapper.map(user,UserDto.class);
+            return ResponseEntity.ok().body(userDto);
+        }
+        else
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("USER_NOT_FOUND", "Szukany użytkownik nie istnieje.", null));
+    }
+
+    @GetMapping (path = "/email/{email}")
+    public ResponseEntity<Object> getUserByEmail(@PathVariable("email") String email) {
+        User user = userService.getByEmail(email);
+        if(user != null) {
+            UserDto userDto = modelMapper.map(user,UserDto.class);
+            return ResponseEntity.ok().body(userDto);
+        }
+        else
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("USER_NOT_FOUND", "Szukany użytkownik nie istnieje.", null));
     }
 }
