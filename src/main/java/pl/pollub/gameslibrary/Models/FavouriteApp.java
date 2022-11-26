@@ -20,10 +20,10 @@ public class FavouriteApp {
 
     @ManyToOne
     @JoinColumn(name="appId",referencedColumnName="id")
-    private App appId;
+    private App app;
 
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name="userId",referencedColumnName="id")
-    private User userId;
+    private User user;
 }
