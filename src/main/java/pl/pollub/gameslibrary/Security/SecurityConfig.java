@@ -82,6 +82,7 @@ public class SecurityConfig {
                 .antMatchers(GET, "/review/**").permitAll()
 //                .antMatchers(GET, "/review/**").hasAnyAuthority("USER_ROLE")
 
+                .antMatchers(POST, "/favapp").hasAnyAuthority("USER_ROLE")
                 .antMatchers(POST, "/favapp/**").hasAnyAuthority("USER_ROLE")
                 .antMatchers(GET, "/favapp/**").hasAnyAuthority("USER_ROLE")
 
