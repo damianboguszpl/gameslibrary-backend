@@ -58,7 +58,7 @@ public class ReviewController {
     @GetMapping (path = "/user/{email}")
     public ResponseEntity<List<Review>> getReviewsByUserEmail(@PathVariable("email") String email) {
         List<Review> reviews = reviewService.getByUserEmail(email);
-        if (reviews != null) return ResponseEntity.ok().body(reviews);
+        if (!reviews.isEmpty()) return ResponseEntity.ok().body(reviews);
         else return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
