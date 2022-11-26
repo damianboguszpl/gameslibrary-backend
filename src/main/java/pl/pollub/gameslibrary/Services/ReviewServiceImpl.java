@@ -1,7 +1,6 @@
 package pl.pollub.gameslibrary.Services;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pollub.gameslibrary.Models.App;
@@ -18,7 +17,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-@Slf4j
 public class ReviewServiceImpl implements ReviewService{
     @Autowired
     private ReviewRepository reviewRepository;
@@ -33,7 +31,6 @@ public class ReviewServiceImpl implements ReviewService{
         if(appId != null && userEmail != null && textReview != null && rating != null) {
             Optional<App> appOptional = appRepository.findById(appId);
             User user = userRepository.findByEmail(userEmail);
-            log.info("appId: {}, userEmail: {}, textReview: {}, rating: {}", appId, userEmail, textReview, rating);
 
             if(appOptional.isPresent() && user != null) {
                 App app = appOptional.get();
@@ -86,7 +83,6 @@ public class ReviewServiceImpl implements ReviewService{
 
         if(userOptional.isPresent()) {
             User user = userOptional.get();
-            log.info("user: {}", user.getEmail());
             return reviewRepository.findByUserIs(user);
         }
         else return null;
