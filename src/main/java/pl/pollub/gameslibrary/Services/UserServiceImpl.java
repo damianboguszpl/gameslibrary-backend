@@ -125,7 +125,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             userRepository.deleteById(id);
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new DetailedResponse("USER_DELETED", "Użytkownik został usunięty.", null));
+                    .body(new DetailedResponse("USER_DELETED", "User has been deleted.", null));
         }
         else
             throw new UserNotFoundException();
