@@ -74,12 +74,13 @@ public class FavouriteAppControllerIntTest {
         Optional<App> app = appRepository.findById(2114607L);
         ObjectMapper objectMapper = new ObjectMapper();
 
-        FavouriteApp favouriteApp = new FavouriteApp(null,app.get(),user.get());
+//        FavouriteApp favouriteApp = new FavouriteApp(null,app.get(),user.get());
+        FavouriteAppForm favouriteAppForm = new FavouriteAppForm(app.get().getId(), user.get().getId());
 
         mvc.perform(post("/favapp")
                         .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(favouriteApp)))
-                .andExpect(status().isOk())
+                .content(objectMapper.writeValueAsString(favouriteAppForm)))
+                .andExpect(status().isCreated())
                 .andDo(print());
 
         // TODO: add asserts and check why user is null
@@ -104,7 +105,7 @@ public class FavouriteAppControllerIntTest {
     @Test
     @WithMockUser(authorities = { "ADMIN_ROLE", "USER_ROLE" })
     void canDeleteFavouriteApp() throws Exception {
-        mvc.perform(delete("/favapp/5")
+        mvc.perform(delete("/favapp/6")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
@@ -117,11 +118,12 @@ public class FavouriteAppControllerIntTest {
         Optional<App> app = appRepository.findById(2114607L);
         ObjectMapper objectMapper = new ObjectMapper();
 
-        FavouriteApp favouriteApp = new FavouriteApp(null,app.get(),user.get());
+//        FavouriteApp favouriteApp = new FavouriteApp(null,app.get(),user.get());
+        FavouriteAppForm favouriteAppForm = new FavouriteAppForm(app.get().getId(), user.get().getId());
 
-        mvc.perform(put("/favapp/1")
+        mvc.perform(put("/favapp/2")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(favouriteApp)))
+                        .content(objectMapper.writeValueAsString(favouriteAppForm)))
                 .andExpect(status().isOk())
                 .andDo(print());
 
