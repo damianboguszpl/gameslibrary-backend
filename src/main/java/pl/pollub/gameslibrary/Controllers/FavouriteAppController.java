@@ -1,5 +1,6 @@
 package pl.pollub.gameslibrary.Controllers;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,6 +56,7 @@ public class FavouriteAppController {
 }
 
 @Data
+@AllArgsConstructor
 class FavouriteAppForm {
     private Long appId;
     private Long userId;
