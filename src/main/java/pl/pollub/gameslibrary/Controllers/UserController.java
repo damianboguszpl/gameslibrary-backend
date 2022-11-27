@@ -7,11 +7,13 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
 import pl.pollub.gameslibrary.Exceptions.Exceptions.*;
 import pl.pollub.gameslibrary.Models.User;
 import pl.pollub.gameslibrary.Models.UserDto;
+import pl.pollub.gameslibrary.Services.AuthenticatedUserService;
 import pl.pollub.gameslibrary.Services.UserService;
 
 import java.lang.reflect.Type;
@@ -27,6 +29,9 @@ public class UserController {
     private ModelMapper modelMapper;
 
     private final UserService userService;
+
+    @Autowired
+    private AuthenticatedUserService authenticatedUserService;
 
     @PostMapping(path = "/register")
     public ResponseEntity<DetailedResponse> addUser(@RequestBody User user){
@@ -63,6 +68,7 @@ public class UserController {
     }
 
     @GetMapping (path = "/{id}")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE') or @authenticatedUserService.hasId(#id)")
     public ResponseEntity<Object> getUserById(@PathVariable("id") Long id) {
         User user = userService.getById(id);
         if(user != null) {
