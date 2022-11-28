@@ -4,6 +4,7 @@ package pl.pollub.gameslibrary.Services;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pl.pollub.gameslibrary.Models.App;
 
@@ -16,12 +17,15 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public interface SteamApiService {
+public class SteamApiServiceImpl implements SteamApiService {
+    @Autowired
+    static AppService appService;
 
-    String appListURL = "http://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json";
-    String appDetailsURL = "https://store.steampowered.com/api/appdetails?appids=";
+    static String appListURL = "http://api.steampowered.com/ISteamApps/GetAppList/v0002/?format=json";
+    static String appDetailsURL = "https://store.steampowered.com/api/appdetails?appids=";
 
-    static void rebase(AppService appService) throws IOException, InterruptedException, JSONException {
+    public static void rebase(AppService appServiceO) throws IOException, InterruptedException, JSONException {
+        appService = appServiceO;
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest appListRequests = HttpRequest.newBuilder().uri(URI.create(appListURL)).build();
 
@@ -97,7 +101,8 @@ public interface SteamApiService {
         }
     }
 
-    static void pullNewApps(AppService appService) throws IOException, InterruptedException, JSONException {
+    public static void pullNewApps(AppService appServiceO) throws IOException, InterruptedException, JSONException {
+        appService = appServiceO;
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest appListRequests = HttpRequest.newBuilder().uri(URI.create(appListURL)).build();
         
