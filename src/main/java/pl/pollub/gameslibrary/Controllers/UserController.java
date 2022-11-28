@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
-import pl.pollub.gameslibrary.Exceptions.Exceptions.*;
 import pl.pollub.gameslibrary.Models.User;
 import pl.pollub.gameslibrary.Models.UserDto;
 import pl.pollub.gameslibrary.Services.AuthenticatedUserService;
@@ -40,15 +39,17 @@ public class UserController {
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<DetailedResponse> updateUser(@RequestBody User user, @PathVariable("id") Long id) throws UserNotFoundException, IncorrectRequestDataException {
-        UserDto userDto = modelMapper.map(userService.edit(user, id),UserDto.class);
+    public ResponseEntity<DetailedResponse> updateUser(@RequestBody User user, @PathVariable("id") Long id) {
+        ResponseEntity<DetailedResponse> newUserResponse = userService.edit(user, id);
+        User newUser = (User) Objects.requireNonNull(newUserResponse.getBody()).getData();
+        UserDto userDto = modelMapper.map(newUser,UserDto.class);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(new DetailedResponse("USER_UPDATED", "Dane użytkownika zostały zaktualizowane.", userDto));
+                .body(new DetailedResponse("USER_UPDATED", "User has been updated.", userDto));
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<DetailedResponse> deleteUser(@PathVariable("id") Long id) throws UserNotFoundException {
+    public ResponseEntity<DetailedResponse> deleteUser(@PathVariable("id") Long id){
         return userService.delete(id);
     }
 
