@@ -50,21 +50,16 @@ public class FavouriteAppServiceImpl implements FavouriteAppService {
                                 .status(HttpStatus.CREATED)
                                 .body(new DetailedResponse("NEW_FAVOURITE_APP_CREATED", "New FavouriteApp has been created.", null));
                     }
-                    else
-                        return ResponseEntity
+                    else return ResponseEntity
                                 .status(HttpStatus.CONFLICT)
                                 .body(new DetailedResponse("APP_ALREADY_FAVOURITE", "App is already favourite.", null));
                 }
-                else {
-                    return ResponseEntity
+                else return ResponseEntity
                             .status(HttpStatus.BAD_REQUEST)
                             .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Specified User does not exist.", null));
-                }
-            } else {
-                return ResponseEntity
+            } else return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
                         .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Specified App does not exist.", null));
-            }
     }
 
     public ResponseEntity<DetailedResponse> edit(Long appId, Long userId, Long id) {
@@ -79,8 +74,8 @@ public class FavouriteAppServiceImpl implements FavouriteAppService {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Id parameter not specified.", null));
         }
-        FavouriteApp favouriteApp = favouriteAppRepository.findById(id).orElse(null);
 
+        FavouriteApp favouriteApp = favouriteAppRepository.findById(id).orElse(null);
         if (favouriteApp != null) {
             App app = null;
             User user = null;
@@ -92,7 +87,6 @@ public class FavouriteAppServiceImpl implements FavouriteAppService {
                     favouriteApp.setApp(app);
                 }
             }
-
             if(userId != null) {
                 Optional<User> userOptional = userRepository.findById(userId);
                 if(userOptional.isPresent()) {
@@ -100,7 +94,6 @@ public class FavouriteAppServiceImpl implements FavouriteAppService {
                     favouriteApp.setUser(user);
                 }
             }
-
             if( app == null && user == null) {
                 return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
@@ -113,8 +106,7 @@ public class FavouriteAppServiceImpl implements FavouriteAppService {
                         .body(new DetailedResponse("FAVOURITE_APP_UPDATED", "FavouriteApp has been updated.", favouriteApp));
             }
         }
-        else
-            return ResponseEntity
+        else return ResponseEntity
                     .status(HttpStatus.NOT_FOUND)
                     .body(new DetailedResponse("FAVOURITE_APP_NOT_FOUND", "FavouriteApp does not exist.", null));
     }
@@ -147,6 +139,17 @@ public class FavouriteAppServiceImpl implements FavouriteAppService {
         if(userOptional.isPresent()) {
             User user = userOptional.get();
             return favouriteAppRepository.findByUserIs(user);
+        }
+        else return null;
+    }
+
+    public FavouriteApp getByUserEmailAndAppId(String userEmail, Long appId) {
+        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmail(userEmail));
+        Optional<App> appOptional = appRepository.findById(appId);
+        if(userOptional.isPresent() && appOptional.isPresent()) {
+            User user = userOptional.get();
+            App app = appOptional.get();
+            return favouriteAppRepository.findByUserAndApp(user, app);
         }
         else return null;
     }

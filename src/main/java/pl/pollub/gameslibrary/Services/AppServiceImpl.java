@@ -37,7 +37,8 @@ public class AppServiceImpl implements AppService {
     }
 
     public ResponseEntity<DetailedResponse> edit(App newApp, Long id) {
-        if(id == null) return ResponseEntity
+        if(id == null)
+            return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Id parameter not specified.", null));
         if(newApp.getTitle() == null && newApp.getDescription()  == null && newApp.getShortDescription()  == null
@@ -67,7 +68,8 @@ public class AppServiceImpl implements AppService {
     }
 
     public ResponseEntity<DetailedResponse> delete(Long id) {
-        if(id == null) return ResponseEntity
+        if(id == null)
+            return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Id parameter not specified.", null));
 

@@ -15,5 +15,6 @@ public interface ReviewService {
     List<Review> getAll();
     Review getById(Long id);
     List<Review> getByUserEmail(String userEmail);
+    List<Review> getByAppId(Long appId);
     Review getByUserEmailAndAppId(String userEmail, Long appId);
 }

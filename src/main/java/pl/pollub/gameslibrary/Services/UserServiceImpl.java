@@ -40,30 +40,30 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             if (user.getEmail() == null)
                 return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
-                        .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "E-mail jest pusty.", null));
+                        .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "E-mail parameter not specified.", null));
             if(user.getLogin() != null) {
                 String loginValidationRegex = "^[a-zA-Z0-9._-]{3,}$";
                 Pattern pattern = Pattern.compile(loginValidationRegex);
                 Matcher matcher = pattern.matcher(user.getLogin());
                 if (!matcher.matches()) return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
-                        .body(new DetailedResponse("LOGIN_NOT_VALID", "Login nie spełnia zasad poprawności.", null));
+                        .body(new DetailedResponse("LOGIN_NOT_VALID", "Login does not match validation rules.", null));
             }
             else return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Login jest pusty.", null));
+                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Login parameter not specified.", null));
 
             User existingUser = userRepository.findByEmail(user.getEmail());
             if (existingUser != null)
                 return ResponseEntity
                         .status(HttpStatus.CONFLICT)
-                        .body(new DetailedResponse("EMAIL_ALREADY_TAKEN", "Podany adres e-mail wykorzystuje istniejące już konto.", null));
+                        .body(new DetailedResponse("EMAIL_ALREADY_TAKEN", "Given E-mail address is already used by existing User.", null));
             else {
                 existingUser = userRepository.findByLogin(user.getLogin());
                 if (existingUser != null)
                     return ResponseEntity
                             .status(HttpStatus.CONFLICT)
-                            .body(new DetailedResponse("LOGIN_ALREADY_TAKEN", "Podany login jest już zajęty.", null));
+                            .body(new DetailedResponse("LOGIN_ALREADY_TAKEN", "Given Login is already taken.", null));
             }
 
             if(user.getPassword() != null) {
@@ -77,21 +77,19 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     roleService.addRoleToUser(user.getEmail(), "USER_ROLE");
                     return ResponseEntity
                             .status(HttpStatus.CREATED)
-                            .body(new DetailedResponse("NEW_USER_REGISTERED", "", null));
+                            .body(new DetailedResponse("NEW_USER_REGISTERED", "New User account has been created.", null));
                 }
-                else
-                    return ResponseEntity
+                else return ResponseEntity
                         .status(HttpStatus.BAD_REQUEST)
-                        .body(new DetailedResponse("PASSWORD_NOT_VALID", "Hasło nie spełnia zasad poprawności.", null));
+                        .body(new DetailedResponse("PASSWORD_NOT_VALID", "Password does not match validation rules.", null));
             }
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Hasło jest puste.", null));
+                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Password parameter not specified.", null));
         }
-        else
-            return ResponseEntity
+        else return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Zapytanie nie zawiera poprawnych danych.", null));
+                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Request does not contain required data.", null));
     }
 
     public ResponseEntity<DetailedResponse> edit(User newUser, Long id) {
@@ -112,8 +110,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                         .status(HttpStatus.OK)
                         .body(new DetailedResponse("USER_UPDATED", "User has been updated.", user));
             }
-            else
-                return ResponseEntity
+            else return ResponseEntity
                         .status(HttpStatus.NOT_FOUND)
                         .body(new DetailedResponse("USER_NOT_FOUND", "Specified User does not exist.", null));
         }
@@ -131,7 +128,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     .body(new DetailedResponse("USER_DELETED", "User has been deleted.", null));
         }
         else return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.NOT_FOUND)
                 .body(new DetailedResponse("USER_NOT_FOUND", "User does not exist.", null));
     }
 

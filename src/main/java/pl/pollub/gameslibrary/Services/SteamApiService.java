@@ -114,8 +114,7 @@ public interface SteamApiService {
             else { goOn1 = true; }
         }
 //        
-        
-        
+
         JSONObject appListObject = new JSONObject(appListResponse.body());
         appListObject = appListObject.getJSONObject("applist");
         JSONArray appListArray = appListObject.getJSONArray("apps");

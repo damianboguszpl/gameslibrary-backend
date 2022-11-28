@@ -120,7 +120,7 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleRepository.findByName(roleName);
         if(role == null)
             return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.NOT_FOUND)
                     .body(new DetailedResponse("ROLE_NOT_FOUND", "Role has not been found.", null));
 
         if(user.getRoles().contains(role)) {
@@ -156,7 +156,7 @@ public class RoleServiceImpl implements RoleService {
         Role role = roleRepository.findByName(roleName);
         if(role == null)
             return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.NOT_FOUND)
                     .body(new DetailedResponse("ROLE_NOT_FOUND", "Role has not been found.", null));
 
         if(user.getRoles().contains(role)) {
@@ -167,7 +167,7 @@ public class RoleServiceImpl implements RoleService {
                     .body(new DetailedResponse("ROLE_REVOKED", "The Role has been taken from User.", null));
         }
         else {
-            log.info("User: {} have not got Role: {}", email, roleName);
+            log.info("User: {} already does not have Role: {}", email, roleName);
             return ResponseEntity
                     .status(HttpStatus.CONFLICT)
                     .body(new DetailedResponse("ROLE_NOT_OWNED", "User already does not own the Role.", null));
