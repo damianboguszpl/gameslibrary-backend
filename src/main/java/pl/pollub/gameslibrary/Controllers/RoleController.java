@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.pollub.gameslibrary.Exceptions.Exceptions.IncorrectRequestDataException;
-import pl.pollub.gameslibrary.Exceptions.Exceptions.RoleNotFoundException;
 import pl.pollub.gameslibrary.Models.Role;
 import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
 import pl.pollub.gameslibrary.Services.RoleService;
@@ -28,15 +26,16 @@ public class RoleController {
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<DetailedResponse>  updateRole(@RequestBody Role newRole, @PathVariable("id") Long id) throws RoleNotFoundException, IncorrectRequestDataException {
-        Role role = roleService.edit(newRole, id);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new DetailedResponse("ROLE_UPDATED", "Role details have been updated.", role));
+    public ResponseEntity<DetailedResponse>  updateRole(@RequestBody Role newRole, @PathVariable("id") Long id) {
+//        Role role = roleService.edit(newRole, id);
+//        return ResponseEntity
+//                .status(HttpStatus.OK)
+//                .body(new DetailedResponse("ROLE_UPDATED", "Role details have been updated.", role));
+        return roleService.edit(newRole, id);
     }
 
     @DeleteMapping(path = "/{id}")
-    public ResponseEntity<DetailedResponse> deleteRole(@PathVariable("id") Long id) throws RoleNotFoundException {
+    public ResponseEntity<DetailedResponse> deleteRole(@PathVariable("id") Long id) {
         return roleService.delete(id);
     }
 

@@ -1,11 +1,15 @@
 package pl.pollub.gameslibrary.Services;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import pl.pollub.gameslibrary.Models.App;
 import pl.pollub.gameslibrary.Models.Review;
 import pl.pollub.gameslibrary.Models.User;
+import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
 import pl.pollub.gameslibrary.Repositories.AppRepository;
 import pl.pollub.gameslibrary.Repositories.ReviewRepository;
 import pl.pollub.gameslibrary.Repositories.UserRepository;
@@ -14,6 +18,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -27,45 +32,72 @@ public class ReviewServiceImpl implements ReviewService{
 
 
     //    @Autowired
-    public Review add(Long appId, String userEmail, String textReview, Integer rating) {
+    public ResponseEntity<DetailedResponse> add(Long appId, String userEmail, String textReview, Integer rating) {
         if(appId != null && userEmail != null && textReview != null && rating != null) {
             Optional<App> appOptional = appRepository.findById(appId);
             User user = userRepository.findByEmail(userEmail);
 
-            if(appOptional.isPresent() && user != null) {
+            if(user == null)
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(new DetailedResponse("USER_NOT_FOUND", "Specified User does not exist.", null));
+
+            if(appOptional.isPresent()) {
                 App app = appOptional.get();
                 Review existingReview = reviewRepository.findByUserAndApp(user, app);
                 if(existingReview == null) {
                     Review review = new Review(null, textReview, rating, user, app);
-                    return reviewRepository.save(review);
+                    reviewRepository.save(review);
+                    return ResponseEntity
+                            .status(HttpStatus.CREATED)
+                            .body(new DetailedResponse("NEW_REVIEW_APP_CREATED", "New Review has been created.", null));
                 }
-                else return null;
-            } else {    // app or user doesn't exist
-                return null;
+                else return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body(new DetailedResponse("REVIEW_ALREADY_EXISTS", "Review already exists.", null));
+            } else {
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(new DetailedResponse("APP_NOT_FOUND", "Specified App does not exist.", null));
             }
         }
         else return null;
     }
 
-    public Review edit(Long id, String textReview, Integer rating) {
+    public ResponseEntity<DetailedResponse> edit(Long id, String textReview, Integer rating) {
         Review review = reviewRepository.findById(id).orElse(null);
 
-        if (review != null && (textReview != null || rating != null)) {
+        if(review == null)
+            return ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .body(new DetailedResponse("REVIEW_NOT_FOUND", "Review does not exist.", null));
+    log.info(textReview);
+    log.info(String.valueOf(rating));
+        if (textReview != null || rating != null) {
             review.setTextReview(textReview!=null?textReview:review.getTextReview());
             review.setRating(rating!=null?rating:review.getRating());
-            return reviewRepository.save(review);
+            reviewRepository.save(review);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new DetailedResponse("REVIEW_UPDATED", "Review has been updated.", review));
         }
-        else return null;
+        else return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Request does not contain required data.", null));
     }
 
-    public Review del(Long id) {
+    public ResponseEntity<DetailedResponse> del(Long id) {
         Review review = reviewRepository.findById(id).orElse(null);
 
         if (review != null) {
             reviewRepository.deleteById(id);
-            return review;
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new DetailedResponse("REVIEW_DELETED", "Review has been deleted.", null));
         }
-        else return null;
+        else return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new DetailedResponse("REVIEW_NOT_FOUND", "Review does not exist.", null));
     }
 
     public List<Review> getAll() {

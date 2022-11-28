@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.pollub.gameslibrary.Exceptions.Exceptions.IncorrectRequestDataException;
 import pl.pollub.gameslibrary.Models.FavouriteApp;
 import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
 import pl.pollub.gameslibrary.Services.FavouriteAppService;
@@ -27,9 +26,8 @@ public class FavouriteAppController {
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<DetailedResponse>  updateFavouriteApp(@RequestBody FavouriteAppForm favouriteAppForm, @PathVariable("id") Long id) throws IncorrectRequestDataException {
+    public ResponseEntity<DetailedResponse> updateFavouriteApp(@RequestBody FavouriteAppForm favouriteAppForm, @PathVariable("id") Long id) {
         return  favouriteAppService.edit(favouriteAppForm.getAppId(), favouriteAppForm.getUserId(), id);
-
     }
 
     @DeleteMapping(path = "/{id}")
