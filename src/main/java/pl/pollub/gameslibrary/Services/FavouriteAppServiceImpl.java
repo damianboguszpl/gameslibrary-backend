@@ -110,12 +110,12 @@ public class FavouriteAppServiceImpl implements FavouriteAppService {
                 favouriteAppRepository.save(favouriteApp);
                 return ResponseEntity
                         .status(HttpStatus.OK)
-                        .body(new DetailedResponse("FAVOURITE_APP_UPDATED", "FavouriteApp have been updated.", favouriteApp));
+                        .body(new DetailedResponse("FAVOURITE_APP_UPDATED", "FavouriteApp has been updated.", favouriteApp));
             }
         }
         else
             return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.NOT_FOUND)
                     .body(new DetailedResponse("FAVOURITE_APP_NOT_FOUND", "FavouriteApp does not exist.", null));
     }
 
@@ -129,7 +129,7 @@ public class FavouriteAppServiceImpl implements FavouriteAppService {
                     .body(new DetailedResponse("FAVOURITE_APP_DELETED", "FavouriteApp has been deleted.", null));
         }
         else return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
+                .status(HttpStatus.NOT_FOUND)
                 .body(new DetailedResponse("FAVOURITE_APP_NOT_FOUND", "FavouriteApp does not exist.", null));
     }
 

@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import pl.pollub.gameslibrary.Exceptions.Exceptions.IncorrectRequestDataException;
-import pl.pollub.gameslibrary.Exceptions.Exceptions.RoleNotFoundException;
 import pl.pollub.gameslibrary.Models.Role;
 import pl.pollub.gameslibrary.Models.User;
 import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
@@ -55,20 +53,26 @@ public class RoleServiceImpl implements RoleService {
                     .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Request does not contain required data.", null));
     }
 
-    public Role edit(Role newRole, Long id) throws IncorrectRequestDataException, RoleNotFoundException {
+    public ResponseEntity<DetailedResponse> edit(Role newRole, Long id) {
         if(newRole.getName() == null || id == null) {
-            throw new IncorrectRequestDataException();
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Request does not contain required data.", null));
         }
         Role role = roleRepository.findById(id).orElse(null);
         if (role != null) {
             role.setName(newRole.getName()!=null?newRole.getName():role.getName());
-            return roleRepository.save(role);
+            roleRepository.save(role);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new DetailedResponse("ROLE_UPDATED", "Role has been updated.", role));
         }
-        else
-            throw new RoleNotFoundException();
+        else return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new DetailedResponse("ROLE_NOT_FOUND", "Role does not exist.", null));
     }
 
-    public ResponseEntity<DetailedResponse> delete(Long id) throws RoleNotFoundException {
+    public ResponseEntity<DetailedResponse> delete(Long id){
         Role role = roleRepository.findById(id).orElse(null);
         if (role != null) {
             List<User> users = (List<User>) userRepository.findAll();
@@ -83,8 +87,9 @@ public class RoleServiceImpl implements RoleService {
                     .status(HttpStatus.BAD_REQUEST)
                     .body(new DetailedResponse("ROLE_IS_USED", "Role is being used by at least one User and can not be deleted.", null));
         }
-        else
-            throw new RoleNotFoundException();
+        else return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new DetailedResponse("ROLE_NOT_FOUND", "Role does not exist.", null));
     }
 
     public Iterable<Role> getAll() {
@@ -110,7 +115,7 @@ public class RoleServiceImpl implements RoleService {
         User user = userRepository.findByEmail(email);
         if(user == null)
             return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.NOT_FOUND)
                     .body(new DetailedResponse("USER_NOT_FOUND", "User has not been found.", null));
         Role role = roleRepository.findByName(roleName);
         if(role == null)
@@ -146,7 +151,7 @@ public class RoleServiceImpl implements RoleService {
         User user = userRepository.findByEmail(email);
         if(user == null)
             return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
+                    .status(HttpStatus.NOT_FOUND)
                     .body(new DetailedResponse("USER_NOT_FOUND", "User has not been found.", null));
         Role role = roleRepository.findByName(roleName);
         if(role == null)

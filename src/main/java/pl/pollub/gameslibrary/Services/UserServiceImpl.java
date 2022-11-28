@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import pl.pollub.gameslibrary.Exceptions.Exceptions.*;
 import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
 import pl.pollub.gameslibrary.Models.User;
 import pl.pollub.gameslibrary.Repositories.UserRepository;
@@ -95,7 +94,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Zapytanie nie zawiera poprawnych danych.", null));
     }
 
-    public User edit(User newUser, Long id) throws UserNotFoundException, IncorrectRequestDataException {
+    public ResponseEntity<DetailedResponse> edit(User newUser, Long id) {
         if(newUser.getEmail() != null || newUser.getLogin() != null || newUser.getPassword() != null) {
             User user = userRepository.findById(id).orElse(null);
 
@@ -109,17 +108,21 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     user.setPassword(bcryptHashString);
                 }
                 userRepository.save(user);
-                return user;
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(new DetailedResponse("USER_UPDATED", "User has been updated.", user));
             }
             else
-                throw new UserNotFoundException();
+                return ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .body(new DetailedResponse("USER_NOT_FOUND", "Specified User does not exist.", null));
         }
-        else {
-            throw new IncorrectRequestDataException();
-        }
+        else return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new DetailedResponse("INCORRECT_REQUEST_DATA", "Request does not contain required data.", null));
     }
 
-    public ResponseEntity<DetailedResponse> delete(Long id) throws UserNotFoundException {
+    public ResponseEntity<DetailedResponse> delete(Long id){
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
             userRepository.deleteById(id);
@@ -127,8 +130,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
                     .status(HttpStatus.OK)
                     .body(new DetailedResponse("USER_DELETED", "User has been deleted.", null));
         }
-        else
-            throw new UserNotFoundException();
+        else return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new DetailedResponse("USER_NOT_FOUND", "User does not exist.", null));
     }
 
     public List<User> getAll(){
