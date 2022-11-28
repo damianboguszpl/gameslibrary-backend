@@ -119,8 +119,8 @@ public class ReviewServiceImpl implements ReviewService{
         else return null;
     }
 
-    public Review getByUserEmailAndAppId(String userEmail, Long appId) {
-        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmail(userEmail));
+    public Review getByUserIdAndAppId(Long userId, Long appId) {
+        Optional<User> userOptional = userRepository.findById(userId);
         Optional<App> appOptional = appRepository.findById(appId);
         if(userOptional.isPresent() && appOptional.isPresent()) {
             User user = userOptional.get();
