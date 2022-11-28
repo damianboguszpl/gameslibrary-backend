@@ -37,11 +37,6 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = LAZY)
     private Collection<Review> reviews = new ArrayList<>();
 
-    @ManyToMany(fetch = EAGER) // whenever user will be loaded, his roles will be loaded too
+    @ManyToMany(fetch = EAGER)
     private Collection<Role> roles = new ArrayList<>();
-
-//    @OneToMany(fetch = EAGER, mappedBy = "user")
-//    private Collection<Role> roles = new ArrayList<>();
-
-
 }

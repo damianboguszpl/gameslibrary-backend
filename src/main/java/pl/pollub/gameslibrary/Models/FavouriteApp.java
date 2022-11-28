@@ -13,7 +13,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FavouriteApp {
-
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;

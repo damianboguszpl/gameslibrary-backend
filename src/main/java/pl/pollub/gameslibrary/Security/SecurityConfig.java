@@ -39,22 +39,6 @@ public class SecurityConfig {
 
     @Bean
     @SuppressWarnings("unused")
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:3000")
-//                        .allowedMethods(CorsConfiguration.ALL)
-                        .allowedMethods("*")
-//                        .allowedOriginPatterns(CorsConfiguration.ALL);
-                        .allowedHeaders(CorsConfiguration.ALL);
-            }
-        };
-    }
-
-    @Bean
-    @SuppressWarnings("unused")
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(null));
         customAuthenticationFilter.setFilterProcessesUrl("/auth/login");
@@ -90,7 +74,6 @@ public class SecurityConfig {
 
         http.addFilter(customAuthenticationFilter);
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-//             .httpBasic(Customizer.withDefaults());
         .httpBasic().disable()
         .csrf().disable();
         return http.build();
@@ -102,4 +85,19 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
+    @Bean
+    @SuppressWarnings("unused")
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:3000")
+//                        .allowedMethods(CorsConfiguration.ALL)
+                        .allowedMethods("*")
+//                        .allowedOriginPatterns(CorsConfiguration.ALL);
+                        .allowedHeaders(CorsConfiguration.ALL);
+            }
+        };
+    }
 }

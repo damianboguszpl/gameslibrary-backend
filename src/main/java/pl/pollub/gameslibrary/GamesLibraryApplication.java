@@ -25,9 +25,6 @@ public class GamesLibraryApplication {
 	@Autowired
 	AppService appService;
 
-//	@Autowired
-//	SteamApiService steamApiService;
-
 	public static void main(String[] args) {
 		SpringApplication.run(GamesLibraryApplication.class, args);
 	}
@@ -58,7 +55,6 @@ public class GamesLibraryApplication {
 			userService.add(new User(null, "arturnowak4@gmail.com", "arturnowak4@gmail.com", "Ab3c@dlo12", new ArrayList<>(), new ArrayList<>()));
 			roleService.addRoleToUser("arturnowak4@gmail.com", "USER_ROLE");
 			roleService.addRoleToUser("arturnowak4@gmail.com", "ADMIN_ROLE");
-
 		};
 	}
 
