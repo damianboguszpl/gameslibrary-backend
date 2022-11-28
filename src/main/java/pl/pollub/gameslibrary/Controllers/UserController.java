@@ -42,10 +42,13 @@ public class UserController {
     public ResponseEntity<DetailedResponse> updateUser(@RequestBody User user, @PathVariable("id") Long id) {
         ResponseEntity<DetailedResponse> newUserResponse = userService.edit(user, id);
         User newUser = (User) Objects.requireNonNull(newUserResponse.getBody()).getData();
-        UserDto userDto = modelMapper.map(newUser,UserDto.class);
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .body(new DetailedResponse("USER_UPDATED", "User has been updated.", userDto));
+        if(newUser != null) {
+            UserDto userDto = modelMapper.map(newUser,UserDto.class);
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(new DetailedResponse("USER_UPDATED", "User has been updated.", userDto));
+        }
+        else return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
     @DeleteMapping(path = "/{id}")
@@ -65,7 +68,7 @@ public class UserController {
         else
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedResponse("Nie znaleziono żadnych użytkowników.", "", null));
+                    .body(new DetailedResponse("No users found.", "", null));
     }
 
     @GetMapping (path = "/{id}")
@@ -79,7 +82,7 @@ public class UserController {
         else
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedResponse("USER_NOT_FOUND", "Szukany użytkownik nie istnieje.", null));
+                    .body(new DetailedResponse("USER_NOT_FOUND", "User does not exist", null));
     }
 
     @GetMapping (path = "/email/{email}")
@@ -92,6 +95,6 @@ public class UserController {
         else
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
-                    .body(new DetailedResponse("USER_NOT_FOUND", "Szukany użytkownik nie istnieje.", null));
+                    .body(new DetailedResponse("USER_NOT_FOUND", "User does not exist.", null));
     }
 }
