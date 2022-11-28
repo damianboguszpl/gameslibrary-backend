@@ -1,5 +1,6 @@
 package pl.pollub.gameslibrary;
 
+import org.json.JSONException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -13,6 +14,8 @@ import pl.pollub.gameslibrary.Models.Role;
 import pl.pollub.gameslibrary.Models.User;
 import pl.pollub.gameslibrary.Services.*;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.util.ArrayList;
 
 //@Slf4j
@@ -22,8 +25,8 @@ public class GamesLibraryApplication {
 	@Autowired
 	AppService appService;
 
-	@Autowired
-	SteamApiService steamApiService;
+//	@Autowired
+//	SteamApiService steamApiService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(GamesLibraryApplication.class, args);
@@ -63,8 +66,8 @@ public class GamesLibraryApplication {
 ////	public void loadAppsFromApi() {
 //	public void loadAppsFromApi() throws IOException, InterruptedException, JSONException {
 //
-//		SteamApiService.pullNewApps(appService);
-////		steamApiService.rebase(appService);
+////		SteamApiService.pullNewApps(appService);
+//		SteamApiService.rebase(appService);
 //
 //	}
 }
