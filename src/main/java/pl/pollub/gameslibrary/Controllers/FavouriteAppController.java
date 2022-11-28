@@ -2,6 +2,7 @@ package pl.pollub.gameslibrary.Controllers;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import pl.pollub.gameslibrary.Services.FavouriteAppService;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @RestController
 @RequestMapping(path="/favapp")
 public class FavouriteAppController {
@@ -49,6 +51,13 @@ public class FavouriteAppController {
     public ResponseEntity<Iterable<FavouriteApp>> getFavouriteAppByUserId(@PathVariable("id") Long id) {
         List<FavouriteApp> favouriteApps = (List<FavouriteApp>) favouriteAppService.getByUserId(id);
         if (!favouriteApps.isEmpty()) return ResponseEntity.ok().body(favouriteApps);
+        else return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+    }
+
+    @GetMapping (path = "/user/{userId}/app/{appId}")
+    public ResponseEntity<FavouriteApp> getFavouriteAppByUserIdAndAppId(@PathVariable("userId") Long userId, @PathVariable("appId") Long appId) {
+        FavouriteApp favouriteApp = favouriteAppService.getByUserIdAndAppId(userId, appId);
+        if (favouriteApp != null) return ResponseEntity.ok().body(favouriteApp);
         else return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 }

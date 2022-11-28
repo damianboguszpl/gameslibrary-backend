@@ -143,8 +143,8 @@ public class FavouriteAppServiceImpl implements FavouriteAppService {
         else return null;
     }
 
-    public FavouriteApp getByUserEmailAndAppId(String userEmail, Long appId) {
-        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmail(userEmail));
+    public FavouriteApp getByUserIdAndAppId(Long userId, Long appId) {
+        Optional<User> userOptional = userRepository.findById(userId);
         Optional<App> appOptional = appRepository.findById(appId);
         if(userOptional.isPresent() && appOptional.isPresent()) {
             User user = userOptional.get();

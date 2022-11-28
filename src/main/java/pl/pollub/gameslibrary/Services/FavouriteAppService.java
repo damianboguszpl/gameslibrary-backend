@@ -13,5 +13,5 @@ public interface FavouriteAppService {
     Iterable<FavouriteApp> getAll();
     FavouriteApp getById(Long id);
     Iterable<FavouriteApp> getByUserId(Long id);
-    FavouriteApp getByUserEmailAndAppId(String userEmail, Long appId);
+    FavouriteApp getByUserIdAndAppId(Long userId, Long appId);
 }
