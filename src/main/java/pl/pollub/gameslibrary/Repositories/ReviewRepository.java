@@ -13,4 +13,5 @@ import java.util.List;
 public interface ReviewRepository extends CrudRepository<Review, Long> {
     List<Review> findByUserIs(User user);
     Review findByUserAndApp(User user, App app);
+    List<Review> findByApp(App app);
 }
