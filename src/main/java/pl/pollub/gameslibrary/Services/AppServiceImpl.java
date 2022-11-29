@@ -95,6 +95,7 @@ public class AppServiceImpl implements AppService {
     }
 
     public Iterable<App> getByType(String type) {
-        return appRepository.findByType(type);
+        if(type.equals("other")) return appRepository.findByTypeEqualsOther();
+        else return appRepository.findByType(type);
     }
 }
