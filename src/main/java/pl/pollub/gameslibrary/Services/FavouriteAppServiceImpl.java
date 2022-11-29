@@ -48,7 +48,7 @@ public class FavouriteAppServiceImpl implements FavouriteAppService {
                         favouriteAppRepository.save(favouriteApp);
                         return ResponseEntity
                                 .status(HttpStatus.CREATED)
-                                .body(new DetailedResponse("NEW_FAVOURITE_APP_CREATED", "New FavouriteApp has been created.", null));
+                                .body(new DetailedResponse("NEW_FAVOURITE_APP_CREATED", "New FavouriteApp has been created.", favouriteApp));
                     }
                     else return ResponseEntity
                                 .status(HttpStatus.CONFLICT)
