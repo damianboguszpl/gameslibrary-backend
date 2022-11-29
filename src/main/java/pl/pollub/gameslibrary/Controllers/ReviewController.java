@@ -74,9 +74,9 @@ public class ReviewController {
         else return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
-    @GetMapping (path = "/user/{email}")
-    public ResponseEntity<List<ReviewDto>> getReviewsByUserEmail(@PathVariable("email") String email) {
-        List<Review> reviews = reviewService.getByUserEmail(email);
+    @GetMapping (path = "/user/{id}")
+    public ResponseEntity<List<ReviewDto>> getReviewsByUserEmail(@PathVariable("id") Long id) {
+        List<Review> reviews = reviewService.getByUserId(id);
         if (!reviews.isEmpty()) {
             Type listType = new TypeToken<List<ReviewDto>>(){}.getType();
             List<ReviewDto> reviewsDto = modelMapper.map(reviews,listType);

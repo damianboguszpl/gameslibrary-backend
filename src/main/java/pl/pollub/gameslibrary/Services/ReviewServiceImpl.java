@@ -109,8 +109,8 @@ public class ReviewServiceImpl implements ReviewService{
         return reviewRepository.findById(id).orElse(null);
     }
 
-    public List<Review> getByUserEmail(String userEmail) {
-        Optional<User> userOptional = Optional.ofNullable(userRepository.findByEmail(userEmail));
+    public List<Review> getByUserId(Long userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
 
         if(userOptional.isPresent()) {
             User user = userOptional.get();

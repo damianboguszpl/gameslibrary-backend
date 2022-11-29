@@ -14,7 +14,7 @@ public interface ReviewService {
     ResponseEntity<DetailedResponse> del(Long id);
     List<Review> getAll();
     Review getById(Long id);
-    List<Review> getByUserEmail(String userEmail);
+    List<Review> getByUserId(Long userId);
     List<Review> getByAppId(Long appId);
     Review getByUserIdAndAppId(Long userId, Long appId);
 }
