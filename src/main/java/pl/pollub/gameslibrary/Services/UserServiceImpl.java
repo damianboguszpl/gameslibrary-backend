@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import pl.pollub.gameslibrary.Models.FavouriteApp;
+import pl.pollub.gameslibrary.Models.Review;
 import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
 import pl.pollub.gameslibrary.Models.User;
 import pl.pollub.gameslibrary.Repositories.UserRepository;
@@ -33,6 +35,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
+    private final ReviewService reviewService;
+    private final FavouriteAppService favouriteAppService;
 
     @Autowired
     public ResponseEntity<DetailedResponse> add(User user) {
@@ -97,6 +101,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             User user = userRepository.findById(id).orElse(null);
 
             if (user != null) {
+                User existingUser = userRepository.findByLogin(newUser.getLogin());
+                if (existingUser != null)
+                    return ResponseEntity
+                            .status(HttpStatus.CONFLICT)
+                            .body(new DetailedResponse("LOGIN_ALREADY_TAKEN", "Given Login is already taken.", null));
                 user.setLogin(newUser.getLogin()!=null?newUser.getLogin():user.getLogin());
                 user.setEmail(newUser.getEmail()!=null?newUser.getEmail():user.getEmail());
 
@@ -122,6 +131,11 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public ResponseEntity<DetailedResponse> delete(Long id){
         User user = userRepository.findById(id).orElse(null);
         if (user != null) {
+            List<Review> userReviews = reviewService.getByUserId(user.getId());
+            userReviews.forEach(review -> reviewService.del(review.getId()));
+            List<FavouriteApp> userFavouriteApps = (List<FavouriteApp>) favouriteAppService.getByUserId(user.getId());
+            userFavouriteApps.forEach(favouriteApp -> favouriteAppService.delete(favouriteApp.getId()));
+
             userRepository.deleteById(id);
             return ResponseEntity
                     .status(HttpStatus.OK)
