@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pl.pollub.gameslibrary.Models.FavouriteApp;
 import pl.pollub.gameslibrary.Models.Utility.DetailedResponse;
+import pl.pollub.gameslibrary.Services.AuthenticatedUserService;
 import pl.pollub.gameslibrary.Services.FavouriteAppService;
 
 import java.util.List;
@@ -20,6 +22,9 @@ import java.util.Objects;
 public class FavouriteAppController {
     @Autowired
     private FavouriteAppService favouriteAppService;
+
+    @Autowired
+    private AuthenticatedUserService authenticatedUserService;
 
     @PostMapping(path = "")
     public ResponseEntity<DetailedResponse> addFavouriteApp(@RequestBody FavouriteAppForm favouriteAppForm) {
@@ -48,13 +53,15 @@ public class FavouriteAppController {
     }
 
     @GetMapping (path = "/user/{id}")
-    public ResponseEntity<Iterable<FavouriteApp>> getFavouriteAppByUserId(@PathVariable("id") Long id) {
+    @PreAuthorize("hasAuthority('ADMIN_ROLE') or @authenticatedUserService.hasId(#id)")
+    public ResponseEntity<Iterable<FavouriteApp>> getFavouriteAppsByUserId(@PathVariable("id") Long id) {
         List<FavouriteApp> favouriteApps = (List<FavouriteApp>) favouriteAppService.getByUserId(id);
         if (!favouriteApps.isEmpty()) return ResponseEntity.ok().body(favouriteApps);
         else return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
     }
 
     @GetMapping (path = "/user/{userId}/app/{appId}")
+    @PreAuthorize("hasAuthority('ADMIN_ROLE') or @authenticatedUserService.hasId(#userId)")
     public ResponseEntity<FavouriteApp> getFavouriteAppByUserIdAndAppId(@PathVariable("userId") Long userId, @PathVariable("appId") Long appId) {
         FavouriteApp favouriteApp = favouriteAppService.getByUserIdAndAppId(userId, appId);
         if (favouriteApp != null) return ResponseEntity.ok().body(favouriteApp);
