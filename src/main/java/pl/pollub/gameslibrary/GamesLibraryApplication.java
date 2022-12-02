@@ -57,13 +57,4 @@ public class GamesLibraryApplication {
 			roleService.addRoleToUser("arturnowak4@gmail.com", "ADMIN_ROLE");
 		};
 	}
-
-//	@PostConstruct
-////	public void loadAppsFromApi() {
-//	public void loadAppsFromApi() throws IOException, InterruptedException, JSONException {
-//
-////		SteamApiService.pullNewApps(appService);
-//		SteamApiService.rebase(appService);
-//
-//	}
 }
