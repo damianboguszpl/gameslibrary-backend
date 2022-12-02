@@ -47,29 +47,33 @@ public class SecurityConfig {
         http.authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS, "/**").permitAll() // **permit OPTIONS call to all**
 
-                .antMatchers("/auth/login/**", "/user/register/**", "/auth/token/refresh/**").permitAll()
+                .antMatchers("/auth/login/**", "/user/register/**", "/auth/token/refresh/**").permitAll()   // post /auth/login  &  post /user/register  &  post /auth/token/refresh
 
-                .antMatchers(POST, "/role/**").hasAnyAuthority("ADMIN_ROLE")
-                .antMatchers(GET, "/role/**").hasAnyAuthority("USER_ROLE")
+                .antMatchers(POST, "/role").hasAnyAuthority("ADMIN_ROLE")               // post /role
+                .antMatchers(POST, "/role/user/addrole").hasAnyAuthority("ADMIN_ROLE")  // post /role/user/addrole
+                .antMatchers(POST, "/role/user/delrole").hasAnyAuthority("ADMIN_ROLE")  // post /role/user/delrole
+                .antMatchers(PUT, "/role/**").hasAnyAuthority("ADMIN_ROLE")             // put /role
+                .antMatchers(DELETE, "/role/**").hasAnyAuthority("ADMIN_ROLE")          // delete /role
+                .antMatchers(GET, "/role/**").hasAnyAuthority("USER_ROLE")              // get /role  &  get /role/{id}
 
-                .antMatchers(POST,"/user").permitAll()
-                .antMatchers(POST, "/user/**").hasAnyAuthority("ADMIN_ROLE")    // to check
-                .antMatchers(PUT, "/user/**").hasAnyAuthority("USER_ROLE")
-//                .antMatchers(GET,"/user/email/**").permitAll()
-                .antMatchers(GET, "/user/**").hasAnyAuthority("USER_ROLE")
+                .antMatchers(PUT, "/user/**").hasAnyAuthority("USER_ROLE")              // put /user/{id}
+                .antMatchers(DELETE, "/user/**").hasAnyAuthority("ADMIN_ROLE")          // delete /user/{id}
+                .antMatchers(GET, "/user/**").hasAnyAuthority("USER_ROLE")              // get /user  &  get /user/{id}  &  get /user/email/{email}
 
-                .antMatchers(POST, "/app/**").hasAnyAuthority("ADMIN_ROLE")
-                .antMatchers(GET, "/app/**").permitAll()
-//                .antMatchers(GET, "/app/**").hasAnyAuthority("USER_ROLE")
+                .antMatchers(POST, "/app/**").hasAnyAuthority("ADMIN_ROLE")             // post app
+                .antMatchers(PUT, "/app/**").hasAnyAuthority("ADMIN_ROLE")              // put app/{id}
+                .antMatchers(DELETE, "/app/**").hasAnyAuthority("ADMIN_ROLE")          // delete app/{id}
+                .antMatchers(GET, "/app/**").permitAll()                                          // get app  &  get app/{id}  &  get app/type/{type}
 
-                .antMatchers(PUT, "/review/**").hasAnyAuthority("USER_ROLE")
-                .antMatchers(POST, "/review/**").hasAnyAuthority("USER_ROLE")
-                .antMatchers(GET, "/review/**").permitAll()
-//                .antMatchers(GET, "/review/**").hasAnyAuthority("USER_ROLE")
+                .antMatchers(POST, "/review/**").hasAnyAuthority("USER_ROLE")           // post /review
+                .antMatchers(PUT, "/review/**").hasAnyAuthority("USER_ROLE")            // put /review/{id}
+                .antMatchers(DELETE, "/review/**").hasAnyAuthority("USER_ROLE")         // delete /review/{id}
+                .antMatchers(GET, "/review/**").permitAll()                                       // get /review  &  get /review/{id}  &  get /review/user/{id}  &  get /review/user/{userId}/app/{appId}  &  get /review/app/{id}
 
-                .antMatchers(POST, "/favapp").hasAnyAuthority("USER_ROLE")
-                .antMatchers(POST, "/favapp/**").hasAnyAuthority("USER_ROLE")
-                .antMatchers(GET, "/favapp/**").hasAnyAuthority("USER_ROLE")
+                .antMatchers(POST, "/favapp").hasAnyAuthority("USER_ROLE")              // post /favapp
+                .antMatchers(POST, "/favapp/**").hasAnyAuthority("USER_ROLE")           // put /favapp/{id}
+                .antMatchers(DELETE, "/favapp/**").hasAnyAuthority("USER_ROLE")         // delete /favapp/{id}
+                .antMatchers(GET, "/favapp/**").hasAnyAuthority("USER_ROLE")            // get /favapp  &  get /favapp/{id}  &  get /favapp/user/{id}  &  get /favapp/user/{userId}/app/{appId}
 
                 .anyRequest().authenticated();
 
