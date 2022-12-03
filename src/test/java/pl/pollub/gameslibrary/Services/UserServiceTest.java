@@ -28,6 +28,10 @@ class UserServiceTest {
     PasswordEncoder passwordEncoder;
     @Mock
     RoleService roleService;
+    @Mock
+    ReviewService reviewService;
+    @Mock
+    FavouriteAppService favouriteAppService;
     private UserServiceImpl underTest;
 
     @BeforeEach
@@ -35,7 +39,9 @@ class UserServiceTest {
         underTest = new UserServiceImpl(
                 userRepository,
                 passwordEncoder,
-                roleService);
+                roleService,
+                reviewService,
+                favouriteAppService);
     }
 
     @Test
