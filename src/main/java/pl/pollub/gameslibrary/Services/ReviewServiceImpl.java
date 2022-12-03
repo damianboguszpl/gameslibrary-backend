@@ -48,7 +48,7 @@ public class ReviewServiceImpl implements ReviewService{
                     reviewRepository.save(review);
                     return ResponseEntity
                             .status(HttpStatus.CREATED)
-                            .body(new DetailedResponse("NEW_REVIEW_APP_CREATED", "New Review has been created.", null));
+                            .body(new DetailedResponse("NEW_REVIEW_CREATED", "New Review has been created.", null));
                 }
                 else return ResponseEntity
                         .status(HttpStatus.CONFLICT)
