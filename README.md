@@ -12,6 +12,7 @@ An additional function is to create a list of the user's favorite applications.
     - https://github.com/damianboguszpl/gameslibrary-frontend
 * Spring backend app (Java, Spring, Auth0, Hibernate, Spring Security, Lombok, MySQL database)
     - https://github.com/kardahim/gameslibrary
+    - https://github.com/damianboguszpl/gameslibrary-backend (~fork)
 
 ### Created as a small college project through the collaboration of:
 * https://github.com/kardahim
